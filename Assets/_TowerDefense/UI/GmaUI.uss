@@ -1,0 +1,138 @@
+/* Панели */
+.top-panel {
+    flex-direction: row;
+    align-items: center;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+}
+
+.bottom-panel {
+    flex-direction: row-reverse; /* Элементы справа налево */
+    align-items: center;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+}
+
+/* Счетчик солнца */
+.sun-counter {
+    flex-direction: row;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 5px 15px 5px 10px;
+    border-radius: 20px;
+    align-items: center;
+}
+
+.sun-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    background-image: resource('Sprites/SunIcon'); /* Укажите путь к иконке солнца */
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.sun-label {
+    font-size: 20px;
+    -unity-font-style: bold;
+    color: white;
+}
+
+/* Карточки растений */
+.plant-cards-container {
+    flex-direction: row;
+    margin-left: 20px;
+}
+
+.plant-card {
+    width: 60px;
+    height: 80px;
+    background-color: rgb(80, 80, 80);
+    border-radius: 8px;
+    border-width: 2px;
+    border-color: rgb(60, 60, 60);
+    margin: 0 5px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px;
+    transition: scale 0.1s;
+}
+
+.plant-card:hover {
+    scale: 1.05 1.05;
+    border-color: rgb(200, 200, 200);
+}
+
+.plant-card.disabled {
+    -unity-slice-left: 0;
+    background-color: rgb(50,50,50);
+    opacity: 0.6;
+}
+
+.plant-icon {
+    width: 50px;
+    height: 50px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.plant-cost {
+    font-size: 14px;
+    -unity-font-style: bold;
+    color: white;
+}
+
+.cooldown-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 6px;
+    /* Высота будет меняться от 100% до 0% через код */
+    height: 100%;
+}
+
+/* Лопата */
+.shovel-button {
+    width: 70px;
+    height: 70px;
+    background-color: rgb(139, 69, 19);
+    border-radius: 8px;
+    border-width: 2px;
+    border-color: rgb(100, 50, 10);
+    transition: scale 0.1s;
+}
+.shovel-button:hover {
+    scale: 1.05 1.05;
+}
+.shovel-icon {
+    flex-grow: 1;
+    background-image: resource('Sprites/ShovelIcon'); /* Путь к иконке лопаты */
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+/* Индикатор волн */
+.wave-progress {
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 5px 15px;
+    border-radius: 8px;
+    margin-right: 15px;
+    min-width: 200px;
+}
+.wave-label {
+    align-self: center;
+    color: white;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+.progress-bar-background {
+    height: 10px;
+    background-color: rgb(30, 30, 30);
+    border-radius: 5px;
+}
+.progress-bar-fill {
+    height: 100%;
+    background-color: rgb(200, 50, 50);
+    border-radius: 5px;
+    width: 50%; /* Будет меняться через код */
+}

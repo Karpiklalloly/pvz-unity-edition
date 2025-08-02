@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fef06e1d9b249ed9f97f799b8cffa14, type: 3}
+  m_Name: Level 2
+  m_EditorClassIdentifier: 
+  AvailableZombies:
+  - {fileID: 11400000, guid: b038db2fc996f0446aebf6b0d80ed332, type: 2}
+  Waves:
+  - DelayBeforeStart: 5
+    Budget: 20
+    IsKeyWave: 0
+    UnlockAfterThisWave: []

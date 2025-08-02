@@ -1,0 +1,23 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/_TowerDefense/UI/GmaUI.uss?fileID=7433441132597879392&amp;guid=75935a621f29de34fbe9811de1a1f626&amp;type=3#GmaUI" />
+    <ui:VisualElement name="hud-container" style="flex-grow: 1; pick-mode: Ignore;">
+        <ui:VisualElement name="top-panel" class="top-panel">
+            <ui:VisualElement name="sun-counter" class="sun-counter">
+                <ui:VisualElement name="sun-icon" class="sun-icon" />
+                <ui:Label text="50" name="sun-label" class="sun-label" />
+            </ui:VisualElement>
+            <ui:VisualElement name="plant-cards-container" class="plant-cards-container" />
+        </ui:VisualElement>
+        <ui:VisualElement name="bottom-panel" class="bottom-panel">
+            <ui:Button name="shovel-button" class="shovel-button">
+                <ui:VisualElement class="shovel-icon" />
+            </ui:Button>
+            <ui:VisualElement name="wave-progress" class="wave-progress">
+                <ui:Label text="Волна 1/10" name="wave-label" class="wave-label" />
+                <ui:VisualElement name="progress-bar-background" class="progress-bar-background">
+                    <ui:VisualElement name="progress-bar-fill" class="progress-bar-fill" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

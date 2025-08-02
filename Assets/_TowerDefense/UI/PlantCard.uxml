@@ -1,0 +1,8 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/_TowerDefense/UI/GmaUI.uss?fileID=7433441132597879392&amp;guid=75935a621f29de34fbe9811de1a1f626&amp;type=3#GmaUI" />
+    <ui:VisualElement name="PlantCardTemplate" class="plant-card">
+        <ui:VisualElement name="icon" class="plant-icon" />
+        <ui:Label name="cost" text="100" class="plant-cost" />
+        <ui:VisualElement name="cooldown-overlay" class="cooldown-overlay" />
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,17 @@
+{
+    "name": "DraonECS.Extensions",
+    "rootNamespace": "",
+    "references": [
+        "GUID:601559450a0eeba499e4df3c1e3390f3",
+        "GUID:9e95bf97f4769924488e291719cae93f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,23 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/TowerDefense/UI/MainMenu.uss?fileID=7433441132597879392&amp;guid=104365eb2dbc2f048822d15297102e54&amp;type=3#MainMenu" />
+    <ui:VisualElement name="main-container" class="main-container">
+        <ui:VisualElement name="header" class="header">
+            <ui:Label text="Tower Defense" name="title-label" class="title" />
+        </ui:VisualElement>
+        <ui:VisualElement name="content" class="content">
+            <ui:VisualElement name="menu-buttons" class="menu-buttons">
+                <ui:Button text="Play" name="play-button" class="menu-button primary-button" />
+                <ui:Button text="Quit" name="quit-button" class="menu-button secondary-button" />
+            </ui:VisualElement>
+            <ui:VisualElement name="level-selection" class="level-selection">
+                <ui:Label text="Select Level" name="level-title" class="section-title" />
+                <ui:ScrollView name="level-scroll" class="level-scroll">
+                    <ui:VisualElement name="level-container" class="level-container" />
+                </ui:ScrollView>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="footer" class="footer">
+            <ui:Label text="Made with Unity &amp; DragonECS" name="footer-label" class="footer-text" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

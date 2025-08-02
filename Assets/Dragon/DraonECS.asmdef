@@ -1,0 +1,16 @@
+{
+    "name": "DraonECS",
+    "rootNamespace": "",
+    "references": [
+        "GUID:9e95bf97f4769924488e291719cae93f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

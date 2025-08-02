@@ -1,0 +1,24 @@
+{
+    "name": "TowerDefense",
+    "rootNamespace": "TowerDefense",
+    "references": [
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:75469ad4d38634e559750d17036d5f7c",
+        "GUID:6546d7765b4165b40850b3667f981c26",
+        "GUID:6bd2de09717c9d6448849d823742240f",
+        "GUID:e1b0feb9d48fee64da21a08eeb2fafd4",
+        "GUID:601559450a0eeba499e4df3c1e3390f3",
+        "GUID:324caed91501a9c47a04ebfd87b68794",
+        "GUID:e851236b9ac2b9b4eaaa99506366edea",
+        "GUID:5d5ea035d6cb1a64bbf98237b6c293d4"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

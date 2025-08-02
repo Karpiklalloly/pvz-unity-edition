@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2958f9d2b38a45efbdd6d6cf760bc9e6, type: 3}
+  m_Name: Sunflower
+  m_EditorClassIdentifier: 
+  _templates: []
+  _componentTemplates:
+  - rid: 7783122444521046284
+  - rid: 7783122444521046285
+  - rid: 7783122444521046286
+  - rid: 7783122444521046287
+  Prefab: {fileID: 466938846548272793, guid: f0b6a67c0452d3c4f8283b41effd4359, type: 3}
+  PlantCardConfig: {fileID: 11400000, guid: 9c0f385879967c34f9b474fec19b9f08, type: 2}
+  Name: Sunflower
+  references:
+    version: 2
+    RefIds:
+    - rid: 7783122444521046284
+      type: {class: TransformReferenceTemplate, ns: TowerDefense.Core, asm: TowerDefense}
+      data:
+        component:
+          Transform: {fileID: 0}
+    - rid: 7783122444521046285
+      type: {class: PlantTemplate, ns: TowerDefense.Core, asm: TowerDefense}
+      data:
+        _offset: 0
+    - rid: 7783122444521046286
+      type: {class: HealthTemplate, ns: TowerDefense.Core, asm: TowerDefense}
+      data:
+        component:
+          CurrentHeath: 50
+          MaxHealth: 50
+        _offset: 0
+    - rid: 7783122444521046287
+      type: {class: AttackCooldownTemplate, ns: TowerDefense.Core, asm: TowerDefense}
+      data:
+        component:
+          Rate: 10
+          Timer: 10
+        _offset: 0
