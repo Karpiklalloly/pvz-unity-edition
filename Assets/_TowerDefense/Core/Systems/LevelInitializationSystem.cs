@@ -27,6 +27,7 @@ namespace TowerDefense.Core
             {
                 Congig = evt.LevelConfig,
             };
+            _world.Get<PlayerData>().SunAmount = evt.LevelConfig.StartSun;
         }
 
         public void Inject(EcsDefaultWorld obj)

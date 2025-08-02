@@ -7,6 +7,7 @@ namespace TowerDefense
     [CreateAssetMenu(fileName = "Level", menuName = "TowerDefence/Level Config", order = -201)]
     public class LevelConfig : ScriptableObject
     {
+        public int StartSun = 500;
         public GridConfig Grid;
         public SunConfig DefaultSun;
         public List<ZombieConfig> AvailableZombies;

@@ -149,7 +149,6 @@ namespace TowerDefense.Core
     [Serializable]
     public struct EatingState : IEcsComponent
     {
-        public float EatingRate;
         public float Timer;
         public entlong TargetPlant;
     }

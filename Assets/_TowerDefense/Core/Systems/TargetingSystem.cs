@@ -21,9 +21,8 @@ namespace TowerDefense.Core
             {
                 _eatingStatePool.Add(evt.Source) = new EatingState()
                 {
-                    Timer = 0,
                     TargetPlant = _world.GetEntityLong(evt.Target),
-                    EatingRate = _eatingRatePool.Get(evt.Source).Rate
+                    Timer = 0
                 };
             }
         }
