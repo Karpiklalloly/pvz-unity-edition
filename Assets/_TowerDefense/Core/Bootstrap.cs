@@ -116,12 +116,14 @@ namespace TowerDefense.Core
                 .Add(new DrawHoveredCellSystem())
                 .Add(new GameUIUpdateSystem())
                 .Add(new TargetingSystem())
+                .Add(new ProjectileDamageSystem())
                 
                 // Plants
                 .Add(new PeaShooterSystem())
                 
                 
                 .Add(new ZombieEatingSystem())
+                
                 // .Add(new GameFlowSystem())
                 .Add(new SunSpawnSystem())
                 //

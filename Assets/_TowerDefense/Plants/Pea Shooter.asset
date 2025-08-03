@@ -19,6 +19,7 @@ MonoBehaviour:
   - rid: 3004434246542295239
   - rid: 3004434246542295240
   - rid: 3004434275099738252
+  - rid: 3004434275099738495
   _additionalComponents:
   - rid: 3004434275099738495
   Prefab: {fileID: 783880781792840457, guid: e4c95239aa0150b41b370f29b5b7514f, type: 3}
@@ -47,7 +48,7 @@ MonoBehaviour:
       type: {class: AttackCooldownTemplate, ns: TowerDefense.Core, asm: TowerDefense}
       data:
         component:
-          Rate: 1
+          Rate: 2
           Timer: 0
         _offset: 0
     - rid: 3004434275099738252
