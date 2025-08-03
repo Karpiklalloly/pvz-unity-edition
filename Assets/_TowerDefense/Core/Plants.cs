@@ -11,4 +11,13 @@ namespace TowerDefense.Core
     public class PeaShooterTemplate : TagComponentTemplate<PeaShooter>
     {
     }
+
+    [Serializable]
+    public struct Sunflower : IEcsTagComponent
+    {
+    }
+
+    public class SunflowerTemplate : TagComponentTemplate<Sunflower>
+    {
+    }
 }

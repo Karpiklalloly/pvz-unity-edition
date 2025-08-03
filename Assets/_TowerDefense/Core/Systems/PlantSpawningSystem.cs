@@ -30,6 +30,7 @@ namespace TowerDefense.Core
             _lastGO.transform.position = new Vector3(10, 10, 10);
             _lastGO.transform.forward = _lastGO.transform.right;
             _lastCard = evt.Card;
+            _world.GetPool<Plant>().Del(_lastEntity.ID);
             var renderer = _rendererPool.Get(_lastEntity.ID).Renderer;
             var color = renderer.material.color;
             renderer.material.color = new Color(color.r, color.g, color.b, color.a / 2);
@@ -48,6 +49,7 @@ namespace TowerDefense.Core
             {
                 _lastGO.transform.position = _transformPool.Get(evt.Target).Transform.position;
                 _lastCard.CooldownTimer = _lastCard.Config.PlantCardConfig.Cooldown;
+                _world.GetPool<Plant>().Add(_lastEntity.ID);
                 _world.Get<PlayerData>().SunAmount -= _lastCard.Config.PlantCardConfig.Cost;
                 ref var cell = ref _cellPool.Get(evt.Target);
                 cell.EntityInside = _lastEntity;

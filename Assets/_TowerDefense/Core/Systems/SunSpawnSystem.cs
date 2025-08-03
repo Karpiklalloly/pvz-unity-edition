@@ -42,10 +42,7 @@ namespace TowerDefense.Core
             
             var x = Random.Range(0.1f, 0.9f);
             go.transform.position = camera.GetCameraPosition(new Vector2(x, 1.1f));
-            
-            // TODO: Fix movement
             entity.MoveTo(camera.GetCameraPosition(new Vector2(x, Random.Range(0.1f, 0.9f))));
-            //entity.MoveTo(camera.GetCameraPosition(new Vector2(x, 0.1f)));
         }
     }
 }

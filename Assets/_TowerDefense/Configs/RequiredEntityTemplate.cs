@@ -36,7 +36,7 @@ namespace TowerDefense
             List<IComponentTemplate> tt = new();
             foreach (var tem in t)
             {
-                if (_additionalComponents.Count(x => x.Type == tem.Type) > 0)
+                if (_additionalComponents.Any(x => x.Type == tem.Type))
                 {
                     continue;
                 }

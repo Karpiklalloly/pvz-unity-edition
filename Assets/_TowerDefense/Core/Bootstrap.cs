@@ -120,6 +120,7 @@ namespace TowerDefense.Core
                 
                 // Plants
                 .Add(new PeaShooterSystem())
+                .Add(new SunflowerSystem())
                 
                 
                 .Add(new ZombieEatingSystem())
