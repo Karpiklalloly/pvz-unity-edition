@@ -18,6 +18,9 @@ MonoBehaviour:
   - rid: 3004434246542295238
   - rid: 3004434246542295239
   - rid: 3004434246542295240
+  - rid: 3004434275099738252
+  _additionalComponents:
+  - rid: 3004434275099738495
   Prefab: {fileID: 783880781792840457, guid: e4c95239aa0150b41b370f29b5b7514f, type: 3}
   PlantCardConfig: {fileID: 11400000, guid: 8cd19ec406d40a944baacc7d69f83d10, type: 2}
   Name: Pea Shooter
@@ -44,6 +47,16 @@ MonoBehaviour:
       type: {class: AttackCooldownTemplate, ns: TowerDefense.Core, asm: TowerDefense}
       data:
         component:
-          Rate: 5
-          Timer: 5
+          Rate: 1
+          Timer: 0
+        _offset: 0
+    - rid: 3004434275099738252
+      type: {class: DamageTemplate, ns: TowerDefense.Core, asm: TowerDefense}
+      data:
+        component:
+          Value: 10
+        _offset: 0
+    - rid: 3004434275099738495
+      type: {class: PeaShooterTemplate, ns: TowerDefense.Core, asm: TowerDefense}
+      data:
         _offset: 0

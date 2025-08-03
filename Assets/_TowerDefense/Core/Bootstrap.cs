@@ -3,9 +3,9 @@ using System.Collections;
 using DCFApixels.DragonECS;
 using Karpik.Engine.Shared.DragonECS;
 using Karpik.Engine.Shared.EcsRunners;
+using TowerDefense.Core.PlantAttackSystems;
 using TriInspector;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using static TowerDefense.PlayerPrefsConstants;
 
 namespace TowerDefense.Core
@@ -27,6 +27,8 @@ namespace TowerDefense.Core
         private string _menuSceneName;
         [SerializeField] [Required]
         private PlantConfig[] _allPlants;
+        [SerializeField]
+        private ProjectileDataCenter _projectileDataCenter;
 
         private void Awake()
         {
@@ -97,6 +99,7 @@ namespace TowerDefense.Core
                 .Inject(_world)
                 .Inject(_eventWorld)
                 .Inject(_allPlants)
+                .Inject(_projectileDataCenter)
                 
                 .AddUnityDebug(_world, _eventWorld)
                 
@@ -113,9 +116,12 @@ namespace TowerDefense.Core
                 .Add(new DrawHoveredCellSystem())
                 .Add(new GameUIUpdateSystem())
                 .Add(new TargetingSystem())
-                // .Add(new PlantAttackSystem())
+                
+                // Plants
+                .Add(new PeaShooterSystem())
+                
+                
                 .Add(new ZombieEatingSystem())
-                // .Add(new CollisionSystem())
                 // .Add(new GameFlowSystem())
                 .Add(new SunSpawnSystem())
                 //
@@ -143,6 +149,12 @@ namespace TowerDefense.Core
                 .BuildAndInit();
             _pausableRunner = _pipeline.GetRunner<EcsPausableRunner>();
             _pausableLateRunner = _pipeline.GetRunner<PausableLateRunner>();
+        }
+        
+        private EcsPipeline.Builder AddPlantSystems(EcsPipeline.Builder builder)
+        {
+            return builder
+                ;
         }
 
         private void InitializePlayerPrefs()

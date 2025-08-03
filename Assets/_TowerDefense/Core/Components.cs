@@ -128,6 +128,7 @@ namespace TowerDefense.Core
     public struct AttackCooldown : IEcsComponent
     {
         public float Rate;
+        [HideInInspector]
         public float Timer;
     }
     public class AttackCooldownTemplate : ComponentTemplate<AttackCooldown> {}

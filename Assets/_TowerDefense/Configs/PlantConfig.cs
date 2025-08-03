@@ -17,7 +17,8 @@ namespace TowerDefense
             new TransformReferenceTemplate(),
             new PlantTemplate(),
             new HealthTemplate(),
-            new AttackCooldownTemplate()
+            new AttackCooldownTemplate(),
+            new DamageTemplate()
         };
 
         protected override IEnumerable<IComponentTemplate> GetRequiredComponents()

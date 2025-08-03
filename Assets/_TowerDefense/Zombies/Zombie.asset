@@ -70,5 +70,5 @@ MonoBehaviour:
       type: {class: EatingRateTemplate, ns: TowerDefense.Core, asm: TowerDefense}
       data:
         component:
-          Rate: 10
+          Rate: 0.01
         _offset: 0

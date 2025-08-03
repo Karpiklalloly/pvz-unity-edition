@@ -28,6 +28,7 @@ namespace TowerDefense.Core
             }
             (_lastGO, _lastEntity) = Spawner.Spawn(evt.Card.Config.Prefab, evt.Card.Config);
             _lastGO.transform.position = new Vector3(10, 10, 10);
+            _lastGO.transform.forward = _lastGO.transform.right;
             _lastCard = evt.Card;
             var renderer = _rendererPool.Get(_lastEntity.ID).Renderer;
             var color = renderer.material.color;

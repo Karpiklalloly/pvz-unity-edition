@@ -167,6 +167,9 @@ MonoBehaviour:
   _allPlants:
   - {fileID: 11400000, guid: 7863ff4d4d9786c409787d4368771b32, type: 2}
   - {fileID: 11400000, guid: fc2dba25f4a81ec4ba9d305a7b5f4e63, type: 2}
+  _projectileDataCenter:
+    _projectileConfigs:
+    - {fileID: 11400000, guid: da47e10c180a2c34ab2034a1022aa43e, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
