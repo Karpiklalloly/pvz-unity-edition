@@ -9,7 +9,6 @@ namespace TowerDefense.Core
         private EcsPool<EatingState> _eatingStatePool;
         private EcsTagPool<Zombie> _zombiePool;
         private EcsTagPool<Plant> _plantPool;
-        private EcsPool<EatingRate> _eatingRatePool;
 
         public void RunOnEvent(ref CollisionEvent evt)
         {
@@ -33,7 +32,6 @@ namespace TowerDefense.Core
             _eatingStatePool = _world.GetPool<EatingState>();
             _zombiePool = _world.GetPool<Zombie>();
             _plantPool = _world.GetPool<Plant>();
-            _eatingRatePool = _world.GetPool<EatingRate>();
         }
     }
 }

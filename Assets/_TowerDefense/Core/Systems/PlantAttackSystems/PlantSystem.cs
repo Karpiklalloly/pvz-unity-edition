@@ -26,7 +26,6 @@ namespace TowerDefense.Core.PlantAttackSystems
                 var transform = a.transform.Get(e).Transform;
                 ref var cooldown = ref a.attackCooldown.Get(e);
                 cooldown.Timer += GameTime.DeltaTime;
-                Debug.DrawRay(transform.position, transform.forward * 10, Color.red);
                 if (cooldown.Timer >= cooldown.Rate)
                 {
                     Shoot(a.damage.Get(e).Value, transform.position);
