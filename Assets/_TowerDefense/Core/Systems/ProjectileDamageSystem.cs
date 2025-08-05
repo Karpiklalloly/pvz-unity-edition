@@ -18,6 +18,9 @@ namespace TowerDefense.Core
 
             if (!_zombiePool.Has(evt.Target) || !_projectilePool.Has(evt.Source)) return;
             if (_deadPool.Has(evt.Target)) return;
+            // TODO: Почему то дед пул не срабатывает
+            // if (!_world.GetEntityLong(evt.Source).IsAlive) return;
+            // if (!_world.GetEntityLong(evt.Target).IsAlive) return;
 
             _eventWorld.SendEvent(new DamageEvent()
             {

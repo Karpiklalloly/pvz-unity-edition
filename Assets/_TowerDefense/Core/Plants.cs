@@ -20,4 +20,13 @@ namespace TowerDefense.Core
     public class SunflowerTemplate : TagComponentTemplate<Sunflower>
     {
     }
+
+    [Serializable]
+    public struct WallNut : IEcsTagComponent
+    {
+    }
+
+    public class WallNutTemplate : TagComponentTemplate<WallNut>
+    {
+    }
 }

@@ -6,9 +6,19 @@ namespace TowerDefense.Core
 {
     public class MovementSystem : IEcsInject<EcsDefaultWorld>, IEcsPausableRun
     {
-        class Aspect : EcsAspect
+        class TransformAspect : EcsAspect
         {
             public EcsPool<TransformReference> transform = Inc;
+            public EcsPool<MovementDirection> direction = Inc;
+            public EcsPool<MoveSpeed> speed = Inc;
+            public EcsTagPool<IsDead> isDead = Exc;
+            public EcsPool<EatingState> eating = Exc;
+            public EcsPool<RigidBodyReference> rigidBody = Exc;
+        }
+        
+        class RigidBodyAspect : EcsAspect
+        {
+            public EcsPool<RigidBodyReference> rigidBody = Inc;
             public EcsPool<MovementDirection> direction = Inc;
             public EcsPool<MoveSpeed> speed = Inc;
             public EcsTagPool<IsDead> isDead = Exc;
@@ -24,11 +34,19 @@ namespace TowerDefense.Core
 
         public void PausableRun()
         {
-            foreach (var e in _world.Where(out Aspect a))
+            foreach (var e in _world.Where(out TransformAspect a))
             {
                 ref var transform = ref a.transform.Get(e);
                 ref var direction = ref a.direction.Get(e);
-                transform.Transform.position += direction.Direction * GameTime.DeltaTime * a.speed.Get(e).Speed;
+                transform.Transform.position += GameTime.DeltaTime * a.speed.Get(e).Speed * direction.Direction ;
+            }
+            
+            foreach (var e in _world.Where(out RigidBodyAspect a))
+            {
+                ref var transform = ref a.rigidBody.Get(e);
+                ref var direction = ref a.direction.Get(e);
+                var pos = transform.RigidBody.position;
+                transform.RigidBody.MovePosition(pos + GameTime.DeltaTime * a.speed.Get(e).Speed * direction.Direction);
             }
         }
     }

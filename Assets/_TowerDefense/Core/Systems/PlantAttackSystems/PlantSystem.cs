@@ -9,10 +9,11 @@ namespace TowerDefense.Core.PlantAttackSystems
     {
         protected class Aspect : EcsAspect
         {
-            public EcsTagPool<T> peaShooter = Inc;
+            public EcsTagPool<T> plantType = Inc;
             public EcsPool<AttackCooldown> attackCooldown = Inc;
             public EcsPool<TransformReference> transform = Inc;
             public EcsPool<Damage> damage = Inc;
+            public EcsTagPool<Plant> plant = Inc;
             public EcsTagPool<IsDead> isDead = Exc;
         }
         

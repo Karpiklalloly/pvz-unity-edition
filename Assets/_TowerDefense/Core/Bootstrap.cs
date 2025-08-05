@@ -25,8 +25,6 @@ namespace TowerDefense.Core
 
         [Scene] [SerializeField] [Required]
         private string _menuSceneName;
-        [SerializeField] [Required]
-        private PlantConfig[] _allPlants;
         [SerializeField]
         private ProjectileDataCenter _projectileDataCenter;
 
@@ -98,7 +96,6 @@ namespace TowerDefense.Core
             _pipeline = EcsPipeline.New()
                 .Inject(_world)
                 .Inject(_eventWorld)
-                .Inject(_allPlants)
                 .Inject(_projectileDataCenter)
                 
                 .AddUnityDebug(_world, _eventWorld)
@@ -153,12 +150,6 @@ namespace TowerDefense.Core
             _pausableRunner = _pipeline.GetRunner<EcsPausableRunner>();
             _pausableLateRunner = _pipeline.GetRunner<PausableLateRunner>();
         }
-        
-        private EcsPipeline.Builder AddPlantSystems(EcsPipeline.Builder builder)
-        {
-            return builder
-                ;
-        }
 
         private void InitializePlayerPrefs()
         {
@@ -169,7 +160,8 @@ namespace TowerDefense.Core
             var unlocked = UserData.GetStrings(unlocked_plants);
             if (unlocked[0] == string.Empty)
             {
-                UserData.SetStrings(unlocked_plants, _allPlants[0].Name);
+                Debug.LogError("No unlocked plants found.");
+                // UserData.SetStrings(unlocked_plants, _allPlants[0].Name);
                 UserData.Save();
             }
         }

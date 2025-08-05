@@ -40,6 +40,15 @@ namespace TowerDefense.Core
         }
     }
 
+    [Serializable]
+    public struct RigidBodyReference : IEcsComponent
+    {
+        public Rigidbody RigidBody;
+    }
+
+    public class RigidBodyReferenceTemplate : ComponentTemplate<RigidBodyReference>
+    {
+    }
 
     [Serializable]
     public struct RendererReference : IEcsComponent
@@ -50,6 +59,17 @@ namespace TowerDefense.Core
     public class RendererReferenceTemplate : ComponentTemplate<RendererReference>
     {
     }
+
+    [Serializable]
+    public struct ColliderReference : IEcsComponent
+    {
+        public Collider Collider;
+    }
+
+    public class ColliderReferenceTemplate : ComponentTemplate<ColliderReference>
+    {
+    }
+    
     [Serializable]
     public struct Health : IEcsComponent
     {

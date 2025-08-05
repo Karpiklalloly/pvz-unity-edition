@@ -4,12 +4,13 @@ using DCFApixels.DragonECS;
 using Karpik.Engine.Shared.DragonECS;
 using Karpik.Engine.Shared.EcsRunners;
 using TowerDefense.UI;
+using UnityEngine.AddressableAssets;
 using UnityEngine.UIElements;
 using Object = UnityEngine.Object;
 
 namespace TowerDefense.Core
 {
-    public class GameUIUpdateSystem : IEcsInject<EcsDefaultWorld>, IEcsInject<PlantConfig[]>, IEcsPausableRun, IEcsRunOnEvent<SceneLoadedEvent>
+    public class GameUIUpdateSystem : IEcsInject<EcsDefaultWorld>, IEcsInit, IEcsPausableRun, IEcsRunOnEvent<SceneLoadedEvent>
     {
         private GameUIController _controller;
         private int _suns = 0;
@@ -65,6 +66,13 @@ namespace TowerDefense.Core
         public void Inject(PlantConfig[] obj)
         {
             _allPlants = obj;
+        }
+
+        public void Init()
+        {
+            var handle = Addressables.LoadAssetsAsync<PlantConfig>("Plant", null, Addressables.MergeMode.Union);
+            var result = handle.WaitForCompletion();
+            _allPlants = result.ToArray();
         }
     }
 }

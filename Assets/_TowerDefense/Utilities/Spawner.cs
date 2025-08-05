@@ -28,6 +28,16 @@ namespace TowerDefense
             {
                 world.GetPool<RendererReference>().TryAddOrGet(entity.ID).Renderer = renderer;
             }
+            
+            if (o.TryGetComponent<Rigidbody>(out var body))
+            {
+                world.GetPool<RigidBodyReference>().TryAddOrGet(entity.ID).RigidBody = body;
+            }
+            
+            if (o.TryGetComponent<Collider>(out var collider))
+            {
+                world.GetPool<ColliderReference>().TryAddOrGet(entity.ID).Collider = collider;
+            }
 
             o.AddComponent<Provider>().Entity = entity;
             return (o, entity);

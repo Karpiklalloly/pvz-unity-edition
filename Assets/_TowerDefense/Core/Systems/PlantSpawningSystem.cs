@@ -15,6 +15,7 @@ namespace TowerDefense.Core
         private GameUIController.PlantCard _lastCard;
         private EcsPool<GridCell> _cellPool;
         private EcsPool<TransformReference> _transformPool;
+        private EcsPool<ColliderReference> _colliderPool;
 
         public void RunOnEvent(ref CardClickedEvent evt)
         {
@@ -31,6 +32,7 @@ namespace TowerDefense.Core
             _lastGO.transform.forward = _lastGO.transform.right;
             _lastCard = evt.Card;
             _world.GetPool<Plant>().Del(_lastEntity.ID);
+            _colliderPool.Get(_lastEntity.ID).Collider.enabled = false;
             var renderer = _rendererPool.Get(_lastEntity.ID).Renderer;
             var color = renderer.material.color;
             renderer.material.color = new Color(color.r, color.g, color.b, color.a / 2);
@@ -47,13 +49,19 @@ namespace TowerDefense.Core
             
             if (_cellPool.Has(evt.Target))
             {
+                ref var cell = ref _cellPool.Get(evt.Target);
+                if (cell.EntityInside != entlong.NULL)
+                {
+                    //TODO: Добавить скрещивание
+                    return;
+                }
                 _lastGO.transform.position = _transformPool.Get(evt.Target).Transform.position;
                 _lastCard.CooldownTimer = _lastCard.Config.PlantCardConfig.Cooldown;
                 _world.GetPool<Plant>().Add(_lastEntity.ID);
+                _colliderPool.Get(_lastEntity.ID).Collider.enabled = true;
                 _world.Get<PlayerData>().SunAmount -= _lastCard.Config.PlantCardConfig.Cost;
-                ref var cell = ref _cellPool.Get(evt.Target);
+                
                 cell.EntityInside = _lastEntity;
-                //TODO: Добавить скрещивание
 
                 _lastGO = null;
                 _lastCard = null;
@@ -88,6 +96,7 @@ namespace TowerDefense.Core
             _rendererPool = _world.GetPool<RendererReference>();
             _cellPool = _world.GetPool<GridCell>();
             _transformPool = _world.GetPool<TransformReference>();
+            _colliderPool = _world.GetPool<ColliderReference>();
         }
 
 

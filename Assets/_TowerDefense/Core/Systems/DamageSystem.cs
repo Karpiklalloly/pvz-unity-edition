@@ -18,7 +18,7 @@ namespace TowerDefense.Core
 
                 if (health.CurrentHeath <= 0)
                 {
-                    _deadPool.Add(evt.Target);
+                    _deadPool.TryAdd(evt.Target);
                 }
             }
         }
