@@ -134,5 +134,5 @@
     height: 100%;
     background-color: rgb(200, 50, 50);
     border-radius: 5px;
-    width: 50%; /* Будет меняться через код */
+    width: 10%; /* Будет меняться через код */
 }

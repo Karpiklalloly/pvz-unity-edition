@@ -3,11 +3,13 @@ using Karpik.Engine.Shared.DragonECS;
 
 namespace TowerDefense.Core
 {
-    public class DamageSystem : IEcsInject<EcsDefaultWorld>, IEcsRunOnEvent<DamageEvent>
+    public class DamageSystem : IEcsInject<EcsDefaultWorld>, IEcsInject<EcsEventWorld>, IEcsRunOnEvent<DamageEvent>
     {
         private EcsDefaultWorld _world;
         private EcsPool<Health> _healthPool;
+        private EcsTagPool<Zombie> _zombiePool;
         private EcsTagPool<IsDead> _deadPool;
+        private EcsEventWorld _eventWorld;
 
         public void RunOnEvent(ref DamageEvent evt)
         {
@@ -19,6 +21,13 @@ namespace TowerDefense.Core
                 if (health.CurrentHeath <= 0)
                 {
                     _deadPool.TryAdd(evt.Target);
+                    if (_zombiePool.Has(evt.Target))
+                    {
+                        _eventWorld.SendEvent(new ZombieDiedEvent()
+                        {
+                            Target = evt.Target
+                        });
+                    }
                     ref var levelFlow = ref _world.Get<LevelFlow>();
                     for (int i = levelFlow.CurrentWaveIndex - 3; i <= levelFlow.CurrentWaveIndex; i++)
                     {
@@ -40,6 +49,12 @@ namespace TowerDefense.Core
             _world = obj;
             _healthPool = _world.GetPool<Health>();
             _deadPool = _world.GetPool<IsDead>();
+            _zombiePool = _world.GetPool<Zombie>();
+        }
+
+        public void Inject(EcsEventWorld obj)
+        {
+            _eventWorld = obj;
         }
     }
 }

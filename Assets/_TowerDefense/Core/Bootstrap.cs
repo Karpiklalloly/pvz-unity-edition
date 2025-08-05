@@ -131,6 +131,7 @@ namespace TowerDefense.Core
                 .Add(new ZombieSpawnSystem())
                 .Add(new SunCollectionSystem())
                 .Add(new DeathSystem())
+                .Add(new WinLoseSystem())
                 //
                 // .Add(new CleanupSystem())
                 .Add(new LookAtCameraSystem())
@@ -147,6 +148,7 @@ namespace TowerDefense.Core
                 .AddCaller<ClickedEvent>()
                 .AddCaller<CardClickedEvent>()
                 .AddCaller<GoToMainMenuEvent>()
+                .AddCaller<ZombieDiedEvent>()
 
                 .BuildAndInit();
             _pausableRunner = _pipeline.GetRunner<EcsPausableRunner>();

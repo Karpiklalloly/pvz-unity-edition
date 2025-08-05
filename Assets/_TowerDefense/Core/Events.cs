@@ -103,4 +103,25 @@ namespace TowerDefense.Core
         public int WaveIndex;
         public int LastIndex;
     }
+
+    [Serializable]
+    public struct ZombieDiedEvent : IEcsComponentEvent
+    {
+        public int Source { get; set; }
+        public int Target { get; set; }
+    }
+
+    [Serializable]
+    public struct WinEvent : IEcsComponentEvent
+    {
+        public int Source { get; set; }
+        public int Target { get; set; }
+    }
+
+    [Serializable]
+    public struct LoseEvent : IEcsComponentEvent
+    {
+        public int Source { get; set; }
+        public int Target { get; set; }
+    }
 }
