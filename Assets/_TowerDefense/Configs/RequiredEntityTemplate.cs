@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DCFApixels.DragonECS;
 using TriInspector;
@@ -11,7 +12,7 @@ namespace TowerDefense
         [SerializeReference]
         [ReferenceButton(true, typeof(IComponentTemplate))]
         [Required]
-        private IComponentTemplate[] _additionalComponents;
+        private IComponentTemplate[] _additionalComponents = Array.Empty<IComponentTemplate>();
         public T Get<T>() where T : IEcsComponent
         {
             foreach (var template in GetComponentTemplates())

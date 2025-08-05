@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2958f9d2b38a45efbdd6d6cf760bc9e6, type: 3}
+  m_Name: WallNut
+  m_EditorClassIdentifier: 
+  _templates: []
+  _componentTemplates:
+  - rid: 7783122444521046284
+  - rid: 7783122444521046285
+  - rid: 7783122444521046286
+  - rid: 7783122444521046287
+  - rid: 3004434275099738253
+  - rid: 3004434275099738496
+  _additionalComponents:
+  - rid: 3004434334666195137
+  Prefab: {fileID: 466938846548272793, guid: 035b077560e89e044b272236c3ee57dd, type: 3}
+  PlantCardConfig: {fileID: 11400000, guid: 56f61d1b2d97eba47a863d09c9947023, type: 2}
+  Name: WallNut
+  references:
+    version: 2
+    RefIds:
+    - rid: 3004434275099738253
+      type: {class: DamageTemplate, ns: TowerDefense.Core, asm: TowerDefense}
+      data:
+        component:
+          Value: 0
+        _offset: 0
+    - rid: 3004434275099738496
+      type: {class: SunflowerTemplate, ns: TowerDefense.Core, asm: TowerDefense}
+      data:
+        _offset: 0
+    - rid: 3004434334666195137
+      type: {class: WallNutTemplate, ns: TowerDefense.Core, asm: TowerDefense}
+      data:
+        _offset: 0
+    - rid: 7783122444521046284
+      type: {class: TransformReferenceTemplate, ns: TowerDefense.Core, asm: TowerDefense}
+      data:
+        component:
+          Transform: {fileID: 0}
+    - rid: 7783122444521046285
+      type: {class: PlantTemplate, ns: TowerDefense.Core, asm: TowerDefense}
+      data:
+        _offset: 0
+    - rid: 7783122444521046286
+      type: {class: HealthTemplate, ns: TowerDefense.Core, asm: TowerDefense}
+      data:
+        component:
+          CurrentHeath: 50
+          MaxHealth: 50
+        _offset: 0
+    - rid: 7783122444521046287
+      type: {class: AttackCooldownTemplate, ns: TowerDefense.Core, asm: TowerDefense}
+      data:
+        component:
+          Rate: 1
+          Timer: 10
+        _offset: 0
