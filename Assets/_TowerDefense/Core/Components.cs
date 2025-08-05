@@ -273,4 +273,16 @@ namespace TowerDefense.Core
     {
         public List<string> Masks;
     }
+
+    [Serializable]
+    public struct LevelFlow : IEcsComponent
+    {
+        public int CurrentWaveIndex;
+        // индекс волны -> список индексов зомби
+        public Dictionary<int, List<int>> Waves;
+    }
+
+    public class LevelFlowTemplate : ComponentTemplate<LevelFlow>
+    {
+    }
 }

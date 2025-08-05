@@ -10,7 +10,7 @@ using Object = UnityEngine.Object;
 
 namespace TowerDefense.Core
 {
-    public class GameUIUpdateSystem : IEcsInject<EcsDefaultWorld>, IEcsInit, IEcsPausableRun, IEcsRunOnEvent<SceneLoadedEvent>
+    public class GameUIUpdateSystem : IEcsInject<EcsDefaultWorld>, IEcsInit, IEcsPausableRun, IEcsRunOnEvent<SceneLoadedEvent>, IEcsRunOnEvent<NewWaveEvent>
     {
         private GameUIController _controller;
         private int _suns = 0;
@@ -63,16 +63,16 @@ namespace TowerDefense.Core
             _world = obj;
         }
 
-        public void Inject(PlantConfig[] obj)
-        {
-            _allPlants = obj;
-        }
-
         public void Init()
         {
             var handle = Addressables.LoadAssetsAsync<PlantConfig>("Plant", null, Addressables.MergeMode.Union);
             var result = handle.WaitForCompletion();
             _allPlants = result.ToArray();
+        }
+
+        public void RunOnEvent(ref NewWaveEvent evt)
+        {
+            _controller.OnNewWave(evt);
         }
     }
 }

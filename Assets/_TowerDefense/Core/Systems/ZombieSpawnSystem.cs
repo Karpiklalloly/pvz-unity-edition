@@ -8,12 +8,13 @@ using Random = System.Random;
 
 namespace TowerDefense.Core
 {
-    public class ZombieSpawnSystem : IEcsPausableRun, IEcsInject<EcsDefaultWorld>, IEcsRunOnEvent<SceneLoadedEvent>
+    public class ZombieSpawnSystem : IEcsPausableRun, IEcsInject<EcsDefaultWorld>, IEcsInject<EcsEventWorld>, IEcsRunOnEvent<SceneLoadedEvent>
     {
         private EcsDefaultWorld _world;
+        private EcsEventWorld _eventWorld;
         private Random _random = new();
         private float _timer;
-        private EcsPool<MovementDirection> _movementDirectioPool;
+        private EcsPool<MovementDirection> _movementDirectionPool;
 
         public void PausableRun()
         {
@@ -21,27 +22,39 @@ namespace TowerDefense.Core
             if (config == null) return;
             ref var playerData = ref _world.Get<PlayerData>();
             if (playerData.CurrentWaveIndex == -1 || playerData.CurrentWaveIndex >= config.Waves.Count) return;
-
+            ref var flow = ref _world.Get<LevelFlow>();
             _timer += GameTime.DeltaTime;
-            if (_timer >= config.Waves[playerData.CurrentWaveIndex].DelayBeforeStart)
+            if (_timer >= config.Waves[playerData.CurrentWaveIndex].DelayBeforeStart
+                || (flow.Waves.TryGetValue(playerData.CurrentWaveIndex - 1, out var zz) && zz.Count == 0))
             {
+                
+                if (flow.Waves == null) flow.Waves = new Dictionary<int, List<int>>();
+                flow.Waves.TryAdd(playerData.CurrentWaveIndex, new List<int>());
+                var z = flow.Waves[playerData.CurrentWaveIndex];
                 var zombies = GetZombies(config.AvailableZombies, config.Waves[playerData.CurrentWaveIndex].Budget);
                 foreach (var zombie in zombies)
                 {
-                    SpawnZombie(zombie);
+                    var entity = SpawnZombie(zombie);
+                    z.Add(entity);
                 }
-
+                
+                _eventWorld.SendEvent(new NewWaveEvent()
+                {
+                    WaveIndex = playerData.CurrentWaveIndex,
+                    LastIndex = config.Waves.Count - 1
+                });
+                flow.CurrentWaveIndex = playerData.CurrentWaveIndex;
                 playerData.CurrentWaveIndex++;
                 _timer = 0;
             }
-            // TODO: Спавнить, если все прошлые зомби умерли
+            // TODO: Спавнить, если все прошлые зомби умерли (ПРОВЕРИТЬ В ДЕЙСТВИИ)
 
         }
 
         public void Inject(EcsDefaultWorld obj)
         {
             _world = obj;
-            _movementDirectioPool = _world.GetPool<MovementDirection>();
+            _movementDirectionPool = _world.GetPool<MovementDirection>();
         }
         
         private IEnumerable<ZombieConfig> GetZombies(IEnumerable<ZombieConfig> available, int budget)
@@ -69,14 +82,14 @@ namespace TowerDefense.Core
             }
         }
         
-        private void SpawnZombie(ZombieConfig zombieConfig)
+        private int SpawnZombie(ZombieConfig zombieConfig)
         {
             var (go, entity) = Spawner.Spawn(zombieConfig.Prefab, zombieConfig);
-            // TODO: спавнить на разных линиях
             go.transform.position = GetSpawnPosition(ref _world.Get<CurrentLevel>());
             entity.Get<MoveSpeed>().Speed *= ((float)_random.NextDouble() * 0.2f + 0.9f);
             go.transform.forward = -go.transform.right;
-            _movementDirectioPool.TryAddOrGet(entity.ID).Direction = go.transform.forward;
+            _movementDirectionPool.TryAddOrGet(entity.ID).Direction = go.transform.forward;
+            return entity.ID;
         }
 
         private Vector3 GetSpawnPosition(ref CurrentLevel level)
@@ -88,6 +101,11 @@ namespace TowerDefense.Core
                 0,
                 level.Congig.Grid.OriginPosition.y + row * level.Congig.Grid.CellSize.y);
             
+        }
+
+        public void Inject(EcsEventWorld obj)
+        {
+            _eventWorld = obj;
         }
     }
 }

@@ -19,6 +19,18 @@ namespace TowerDefense.Core
                 if (health.CurrentHeath <= 0)
                 {
                     _deadPool.TryAdd(evt.Target);
+                    ref var levelFlow = ref _world.Get<LevelFlow>();
+                    for (int i = levelFlow.CurrentWaveIndex - 3; i <= levelFlow.CurrentWaveIndex; i++)
+                    {
+                        if (levelFlow.Waves.TryGetValue(i, out var zombies))
+                        {
+                            var index = zombies.IndexOf(evt.Target);
+                            if (index != -1)
+                            {
+                                zombies.RemoveAt(index);
+                            }
+                        }
+                    }
                 }
             }
         }

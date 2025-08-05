@@ -88,6 +88,7 @@ namespace TowerDefense.Core
             StartCoroutine(RunOnCoroutine(action, delay));
         }
 
+        // ReSharper disable once InconsistentNaming
         private void InitializeECS()
         {
             _world = EcsDefaultWorldSingletonProvider.Instance.Get();
@@ -140,6 +141,7 @@ namespace TowerDefense.Core
                 .AddCaller<CollectSunEvent>()
                 .AddCaller<LoadSceneEvent>()
                 .AddCaller<SceneLoadedEvent>()
+                .AddCaller<NewWaveEvent>()
                 .AddCaller<SunSpawningEvent>()
                 .AddCaller<PointerIsAbove>()
                 .AddCaller<ClickedEvent>()

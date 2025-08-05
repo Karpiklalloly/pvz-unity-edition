@@ -94,4 +94,13 @@ namespace TowerDefense.Core
         public int Source { get; set; }
         public int Target { get; set; }
     }
+
+    [Serializable]
+    public struct NewWaveEvent : IEcsComponentEvent
+    {
+        public int Source { get; set; }
+        public int Target { get; set; }
+        public int WaveIndex;
+        public int LastIndex;
+    }
 }

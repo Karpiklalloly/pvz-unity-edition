@@ -30,19 +30,34 @@ namespace TowerDefense.UI
             set => _sunLabel.text = value.ToString();
         }
         
+        public int WaveIndex
+        {
+            set
+            {
+                _waveLabel.text = $"Волна {value} / {_maxWaves}";
+                _progressBar.style.width = Length.Percent((float)value / _maxWaves * 100);
+            }
+        }
+        
         public IEnumerable<PlantCard> ActiveCards => _activeCards;
         
         private VisualElement _plantCardsContainer;
         private Label _sunLabel;
+        private Label _waveLabel;
+        private VisualElement _progressBar;
         private List<PlantCard> _activeCards = new();
         private EcsDefaultWorld _world;
         private EcsEventWorld _eventWorld;
+        
+        private int _maxWaves = 0;
 
         private void OnEnable()
         {
             var root = _uiDocument.rootVisualElement;
             _sunLabel = root.Q<Label>("sun-label");
             _plantCardsContainer = root.Q<VisualElement>("plant-cards-container");
+            _waveLabel = root.DeepQ<Label>("wave-label");
+            _progressBar = root.DeepQ<VisualElement>("progress-bar-fill");
             _world = EcsDefaultWorldSingletonProvider.Instance.Get();
             _eventWorld = EcsEventWorldSingletonProvider.Instance.Get();
         }
@@ -51,6 +66,8 @@ namespace TowerDefense.UI
         {
             _plantCardsContainer.Clear();
             _activeCards.Clear();
+
+            WaveIndex = 0;
             
             // TODO: Initialize plant cards based on unlocked plants
             foreach (var plant in unlockedPlants)
@@ -73,6 +90,12 @@ namespace TowerDefense.UI
                 _activeCards.Add(card);
                 _plantCardsContainer.Add(cardElement);
             }
+        }
+
+        public void OnNewWave(NewWaveEvent evt)
+        {
+            _maxWaves = evt.LastIndex + 1;
+            WaveIndex = evt.WaveIndex + 1;
         }
 
         private void OnPlantCardClicked(PlantCard card)
