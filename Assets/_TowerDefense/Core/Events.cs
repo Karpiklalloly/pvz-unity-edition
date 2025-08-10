@@ -124,4 +124,26 @@ namespace TowerDefense.Core
         public int Source { get; set; }
         public int Target { get; set; }
     }
+
+    [Serializable]
+    public struct StartLevelEvent : IEcsComponentEvent
+    {
+        public int Source { get; set; }
+        public int Target { get; set; }
+        public System.Collections.Generic.List<PlantConfig> SelectedPlants;
+    }
+
+    [Serializable]
+    public struct NextLevelEvent : IEcsComponentEvent
+    {
+        public int Source { get; set; }
+        public int Target { get; set; }
+    }
+
+    [Serializable]
+    public struct RestartLevelEvent : IEcsComponentEvent
+    {
+        public int Source { get; set; }
+        public int Target { get; set; }
+    }
 }

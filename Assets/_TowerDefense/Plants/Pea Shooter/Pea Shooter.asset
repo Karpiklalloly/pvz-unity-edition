@@ -48,7 +48,7 @@ MonoBehaviour:
       type: {class: AttackCooldownTemplate, ns: TowerDefense.Core, asm: TowerDefense}
       data:
         component:
-          Rate: 2
+          Rate: 0.1
           Timer: 0
         _offset: 0
     - rid: 3004434275099738252

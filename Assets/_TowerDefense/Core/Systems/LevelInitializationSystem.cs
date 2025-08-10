@@ -4,7 +4,7 @@ using Karpik.Engine.Shared.DragonECS;
 
 namespace TowerDefense.Core
 {
-    public class LevelInitializationSystem : IEcsRunOnEvent<SceneLoadedEvent>, IEcsInject<EcsDefaultWorld>
+    public class LevelInitializationSystem : IEcsRunOnEvent<SceneLoadedEvent>, IEcsInject<EcsDefaultWorld>, IEcsRunOnEvent<StartLevelEvent>
     {
         private EcsDefaultWorld _world;
         public void RunOnEvent(ref SceneLoadedEvent evt)
@@ -20,8 +20,6 @@ namespace TowerDefense.Core
             {
                 throw new InvalidProgramException("No LevelConfig provided in SceneLoadedEvent.");
             }
-
-            GameTime.IsPaused = false;
             
             _world.Get<CurrentLevel>() = new CurrentLevel()
             {
@@ -33,6 +31,11 @@ namespace TowerDefense.Core
         public void Inject(EcsDefaultWorld obj)
         {
             _world = obj;
+        }
+
+        public void RunOnEvent(ref StartLevelEvent evt)
+        {
+            GameTime.IsPaused = false;
         }
     }
 }

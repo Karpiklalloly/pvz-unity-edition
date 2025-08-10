@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine.UIElements;
 
 namespace Karpik.UIExtension
@@ -34,15 +33,6 @@ namespace Karpik.UIExtension
         
         public ExtendedVisualElement()
         {
-            // Подписка на событие elementAdded базового класса через рефлексию
-            typeof(VisualElement)
-                .GetEvent("elementAdded", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
-                ?.AddEventHandler(this, (Action<VisualElement, int>)OnElementAdded);
-            
-            typeof(VisualElement)
-                .GetEvent("elementRemoved", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
-                ?.AddEventHandler(this, (Action<VisualElement>)OnElementRemoved);
-            
             AddManipulator(_contextMenuManipulator);
         }
 
@@ -209,16 +199,6 @@ namespace Karpik.UIExtension
             if (z1 < z2) return -1;
 
             return 0;
-        }
-
-        private void OnElementAdded(VisualElement element, int index)
-        {
-                        
-        }
-
-        private void OnElementRemoved(VisualElement element)
-        {
-            
         }
     }
 }

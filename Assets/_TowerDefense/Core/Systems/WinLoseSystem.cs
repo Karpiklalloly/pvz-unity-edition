@@ -40,6 +40,8 @@ namespace TowerDefense.Core
             ref var levelFlow = ref _world.Get<LevelFlow>();
             if (levelFlow.Waves == null || levelFlow.Waves.Count == 0) return;
             var indexes = levelFlow.Waves.SelectMany(x => x.Value);
+            if (!indexes.Any()) return;
+            
             var most = indexes.Min(x => _transformsPool.Get(x).Transform.transform.position.x);
             ref var g = ref _world.Get<CurrentLevel>().Congig.Grid;
             var left = g.OriginPosition.x - g.CellSize.x / 2;

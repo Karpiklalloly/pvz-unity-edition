@@ -13,11 +13,17 @@ namespace TowerDefense.Core
         private EcsEventWorld _eventWorld;
         private int _mask = LayerMask.GetMask(MaskConstants.PointerMask);
         private EcsDefaultWorld _world;
+        private bool _skipFrame;
         private const float _maxDistance = 100f;
 
         public void Run()
         {
-            if (_camera is null) return;
+            if (_skipFrame)
+            {
+                _skipFrame = false;
+                return;
+            }
+            if (_camera == null) return;
             
             var screenPosition = Pointer.current.position.ReadValue();
             Ray ray = _camera.ScreenPointToRay(screenPosition);
@@ -49,6 +55,7 @@ namespace TowerDefense.Core
         public void RunOnEvent(ref SceneLoadedEvent evt)
         {
             _camera = Camera.main;
+            _skipFrame = true;
         }
 
         public void Inject(EcsEventWorld obj)

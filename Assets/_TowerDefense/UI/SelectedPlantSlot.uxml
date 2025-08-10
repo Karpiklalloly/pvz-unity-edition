@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/_TowerDefense/UI/GmaUI.uss?fileID=7433441132597879392&amp;guid=75935a621f29de34fbe9811de1a1f626&amp;type=3#GmaUI" />
+    <ui:VisualElement name="SelectedPlantSlotTemplate" class="selected-plant-slot">
+        <ui:VisualElement name="slot-icon" class="selectable-plant-icon" style="display: none;" />
+        <ui:Label text="+" style="font-size: 24px; color: rgba(255, 255, 255, 0.5);" />
+    </ui:VisualElement>
+</ui:UXML>

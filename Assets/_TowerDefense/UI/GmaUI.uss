@@ -136,3 +136,421 @@
     border-radius: 5px;
     width: 10%; /* Будет меняться через код */
 }
+/
+* Plant Selection Menu (PvZ style) */
+.plant-selection-menu {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    align-items: center;
+    justify-content: center;
+}
+
+.plant-selection-background {
+    background-color: rgb(139, 69, 19);
+    border-radius: 15px;
+    border-width: 3px;
+    border-color: rgb(101, 67, 33);
+    padding: 30px;
+    width: 90%;
+    height: 80%;
+    min-width: 800px;
+    min-height: 600px;
+    max-width: 1200px;
+    max-height: 900px;
+    align-self: center;
+    justify-self: center;
+}
+
+@media (max-width: 1000px) {
+    .plant-selection-background {
+        width: 95%;
+        height: 85%;
+        min-width: 700px;
+        padding: 25px;
+    }
+    
+    #available-plants-scroll .selectable-plant-card,
+    .available-plants-scroll .selectable-plant-card {
+        width: calc(20% - 10px);
+    }
+}
+
+@media (max-width: 800px) {
+    .plant-selection-background {
+        width: 98%;
+        height: 90%;
+        min-width: 600px;
+        padding: 20px;
+    }
+    
+    #available-plants-scroll .selectable-plant-card,
+    .available-plants-scroll .selectable-plant-card {
+        width: calc(25% - 10px);
+    }
+}
+
+.plant-selection-header {
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.selection-title {
+    font-size: 28px;
+    -unity-font-style: bold;
+    color: rgb(255, 255, 200);
+    margin-bottom: 5px;
+    -unity-text-align: middle-center;
+}
+
+@media (max-width: 800px) {
+    .selection-title {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 600px) {
+    .selection-title {
+        font-size: 20px;
+    }
+}
+
+.selection-subtitle {
+    font-size: 16px;
+    color: rgb(220, 220, 180);
+    -unity-text-align: middle-center;
+}
+
+@media (max-width: 800px) {
+    .selection-subtitle {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 600px) {
+    .selection-subtitle {
+        font-size: 12px;
+    }
+}
+
+.plant-selection-content {
+    flex-direction: row;
+    flex-grow: 1;
+    margin-bottom: 25px;
+    justify-content: space-between;
+}
+
+@media (max-width: 700px) {
+    .plant-selection-content {
+        flex-direction: column;
+        margin-bottom: 15px;
+    }
+    
+    .available-plants {
+        margin-right: 0;
+        margin-bottom: 15px;
+        flex-basis: auto;
+        min-width: 400px;
+    }
+    
+    #available-plants-scroll .selectable-plant-card,
+    .available-plants-scroll .selectable-plant-card {
+        width: calc(33.33% - 10px);
+    }
+    
+    .selected-plants {
+        width: 100%;
+        max-width: none;
+        min-width: 400px;
+    }
+    
+    .selected-plant-slot {
+        width: calc(16.66% - 10px);
+        margin: 5px;
+    }
+}
+
+.available-plants {
+    flex-grow: 1;
+    margin-right: 25px;
+    min-width: 500px;
+    flex-basis: 65%;
+}
+
+.available-plants-scroll {
+    flex-grow: 1;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    padding: 15px;
+    max-height: 65%;
+    min-height: 300px;
+}
+
+#available-plants-scroll {
+    flex-grow: 1;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    padding: 15px;
+    max-height: 65%;
+    min-height: 300px;
+}
+
+#available-plants-scroll > #unity-content-viewport {
+    flex-grow: 1;
+}
+
+#available-plants-scroll > #unity-content-viewport > #unity-content-container,
+.available-plants-scroll > #unity-content-viewport > #unity-content-container,
+#available-plants-scroll #unity-content-container,
+.available-plants-scroll #unity-content-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+    min-height: 100%;
+}
+
+#available-plants-scroll .selectable-plant-card,
+.available-plants-scroll .selectable-plant-card {
+    width: calc(16.66% - 10px);
+    min-width: 90px;
+    max-width: 120px;
+    margin: 5px;
+    flex-shrink: 0;
+}
+
+.selected-plants {
+    width: 30%;
+    min-width: 240px;
+    max-width: 320px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    padding: 15px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.selected-plants-container {
+    flex-grow: 1;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: flex-start;
+    width: 100%;
+}
+
+.section-label {
+    font-size: 16px;
+    -unity-font-style: bold;
+    color: white;
+    margin-bottom: 10px;
+}
+
+.selection-counter {
+    font-size: 14px;
+    color: rgb(200, 200, 200);
+    align-self: center;
+    margin-top: 10px;
+}
+
+.plant-selection-buttons {
+    align-items: center;
+    justify-content: center;
+}
+
+.start-level-button {
+    background-color: rgb(34, 139, 34);
+    color: white;
+    font-size: 18px;
+    -unity-font-style: bold;
+    padding: 10px 30px;
+    border-radius: 8px;
+    border-width: 2px;
+    border-color: rgb(0, 100, 0);
+    transition: scale 0.1s;
+}
+
+.start-level-button:hover {
+    scale: 1.05 1.05;
+    background-color: rgb(50, 155, 50);
+}
+
+.start-level-button:disabled {
+    background-color: rgb(100, 100, 100);
+    border-color: rgb(80, 80, 80);
+    opacity: 0.6;
+}
+
+.selectable-plant-card {
+    width: 80px;
+    height: 100px;
+    min-width: 60px;
+    min-height: 80px;
+    max-width: 100px;
+    max-height: 120px;
+    background-color: rgb(80, 80, 80);
+    border-radius: 8px;
+    border-width: 2px;
+    border-color: rgb(60, 60, 60);
+    margin: 5px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px;
+    transition: scale 0.1s;
+    flex-shrink: 0;
+}
+
+.selectable-plant-card:hover {
+    scale: 1.05 1.05;
+    border-color: rgb(200, 200, 200);
+}
+
+.selectable-plant-card.selected {
+    border-color: rgb(255, 215, 0);
+    border-width: 3px;
+    background-color: rgb(100, 100, 60);
+}
+
+.selectable-plant-icon {
+    width: 75%;
+    height: 60%;
+    min-width: 40px;
+    min-height: 40px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.selectable-plant-name {
+    font-size: 12px;
+    color: white;
+    -unity-text-align: middle-center;
+}
+
+.selected-plant-slot {
+    width: calc(33.33% - 10px);
+    height: 80px;
+    min-width: 60px;
+    min-height: 70px;
+    max-width: 90px;
+    max-height: 100px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.3);
+    border-style: dashed;
+    margin: 5px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.selected-plant-slot.filled {
+    background-color: rgb(80, 80, 80);
+    border-style: solid;
+    border-color: rgb(200, 200, 200);
+}
+
+/* Game End Windows */
+.game-end-window {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    align-items: center;
+    justify-content: center;
+}
+
+.game-end-content {
+    background-color: rgb(40, 40, 40);
+    border-radius: 15px;
+    border-width: 3px;
+    padding: 30px;
+    align-items: center;
+    min-width: 400px;
+    max-width: 600px;
+}
+
+.victory-content {
+    border-color: rgb(34, 139, 34);
+    background-color: rgb(20, 60, 20);
+}
+
+.defeat-content {
+    border-color: rgb(139, 34, 34);
+    background-color: rgb(60, 20, 20);
+}
+
+.game-end-title {
+    font-size: 36px;
+    -unity-font-style: bold;
+    margin-bottom: 15px;
+}
+
+.victory-title {
+    color: rgb(144, 238, 144);
+}
+
+.defeat-title {
+    color: rgb(255, 99, 99);
+}
+
+.game-end-message {
+    font-size: 18px;
+    color: rgb(220, 220, 220);
+    margin-bottom: 20px;
+    -unity-text-align: middle-center;
+}
+
+.game-end-stats {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 25px;
+    min-width: 300px;
+}
+
+.stat-label {
+    font-size: 16px;
+    color: white;
+    margin: 5px 0;
+}
+
+.game-end-buttons {
+    flex-direction: row;
+    justify-content: center;
+}
+
+.game-end-button {
+    font-size: 16px;
+    -unity-font-style: bold;
+    padding: 12px 20px;
+    border-radius: 8px;
+    border-width: 2px;
+    margin: 0 10px;
+    transition: scale 0.1s;
+}
+
+.game-end-button:hover {
+    scale: 1.05 1.05;
+}
+
+.primary-button {
+    background-color: rgb(34, 139, 34);
+    color: white;
+    border-color: rgb(0, 100, 0);
+}
+
+.primary-button:hover {
+    background-color: rgb(50, 155, 50);
+}
+
+.secondary-button {
+    background-color: rgb(100, 100, 100);
+    color: white;
+    border-color: rgb(80, 80, 80);
+}
+
+.secondary-button:hover {
+    background-color: rgb(120, 120, 120);
+}

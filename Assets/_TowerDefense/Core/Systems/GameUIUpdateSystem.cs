@@ -10,12 +10,15 @@ using Object = UnityEngine.Object;
 
 namespace TowerDefense.Core
 {
-    public class GameUIUpdateSystem : IEcsInject<EcsDefaultWorld>, IEcsInit, IEcsPausableRun, IEcsRunOnEvent<SceneLoadedEvent>, IEcsRunOnEvent<NewWaveEvent>, IEcsRunOnEvent<WinEvent>, IEcsRunOnEvent<LoseEvent>
+    public class GameUIUpdateSystem : IEcsInject<EcsDefaultWorld>, IEcsInject<EcsEventWorld>, IEcsInit, IEcsPausableRun, IEcsRunOnEvent<SceneLoadedEvent>, IEcsRunOnEvent<NewWaveEvent>, IEcsRunOnEvent<WinEvent>, IEcsRunOnEvent<LoseEvent>, IEcsRunOnEvent<StartLevelEvent>, IEcsRunOnEvent<ZombieDiedEvent>, IEcsRunOnEvent<CollectSunEvent>
     {
         private GameUIController _controller;
         private int _suns = 0;
         private EcsDefaultWorld _world;
+        private EcsEventWorld _eventWorld;
         private PlantConfig[] _allPlants;
+        private int _zombiesKilled = 0;
+        private int _sunCollected = 0;
 
         public void PausableRun()
         {
@@ -52,15 +55,27 @@ namespace TowerDefense.Core
         {
             _controller = Object.FindFirstObjectByType<GameUIController>();
             if (_controller == null) return;
-            _controller.Init(evt.LevelConfig, _allPlants, 
-                UserData.GetStrings(PlayerPrefsConstants.unlocked_plants, Array.Empty<string>())
+            
+            // Reset stats
+            _zombiesKilled = 0;
+            _sunCollected = 0;
+            
+            // Show plant selection menu with unlocked plants
+            var unlockedPlants = UserData.GetStrings(PlayerPrefsConstants.unlocked_plants, Array.Empty<string>())
                 .Select(name => _allPlants.FirstOrDefault(x => x.Name == name))
-                .Where(static x => x is not null));
+                .Where(static x => x is not null);
+            
+            _controller.ShowPlantSelectionMenu(unlockedPlants);
         }
 
         public void Inject(EcsDefaultWorld obj)
         {
             _world = obj;
+        }
+
+        public void Inject(EcsEventWorld obj)
+        {
+            _eventWorld = obj;
         }
 
         public void Init()
@@ -74,14 +89,43 @@ namespace TowerDefense.Core
             _controller.OnNewWave(evt);
         }
 
+        public void RunOnEvent(ref StartLevelEvent evt)
+        {
+            if (_controller == null) return;
+            
+            // Initialize game UI with selected plants
+            _controller.Init(_world.Get<CurrentLevel>().Congig, evt.SelectedPlants);
+        }
+
         public void RunOnEvent(ref WinEvent evt)
         {
+            if (_controller == null) return;
             
+            var currentLevel = _world.Get<CurrentLevel>();
+            var wavesCompleted = currentLevel.Congig.Waves.Count;
+            
+            _controller.ShowVictoryWindow(wavesCompleted, _zombiesKilled, _sunCollected);
         }
 
         public void RunOnEvent(ref LoseEvent evt)
         {
+            if (_controller == null) return;
             
+            var currentLevel = _world.Get<CurrentLevel>();
+            var levelFlow = _world.Get<LevelFlow>();
+            var wavesCompleted = currentLevel.Congig.Waves.Count - levelFlow.Waves.Count;
+            
+            _controller.ShowDefeatWindow(wavesCompleted, _zombiesKilled, _sunCollected);
+        }
+
+        public void RunOnEvent(ref ZombieDiedEvent evt)
+        {
+            _zombiesKilled++;
+        }
+
+        public void RunOnEvent(ref CollectSunEvent evt)
+        {
+            _sunCollected += 25; // Assuming each sun gives 25 points
         }
     }
 }

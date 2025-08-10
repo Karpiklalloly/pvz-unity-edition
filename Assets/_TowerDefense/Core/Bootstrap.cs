@@ -132,6 +132,7 @@ namespace TowerDefense.Core
                 .Add(new SunCollectionSystem())
                 .Add(new DeathSystem())
                 .Add(new WinLoseSystem())
+                .Add(new GameNavigationSystem())
                 //
                 // .Add(new CleanupSystem())
                 .Add(new LookAtCameraSystem())
@@ -149,6 +150,11 @@ namespace TowerDefense.Core
                 .AddCaller<CardClickedEvent>()
                 .AddCaller<GoToMainMenuEvent>()
                 .AddCaller<ZombieDiedEvent>()
+                .AddCaller<WinEvent>()
+                .AddCaller<LoseEvent>()
+                .AddCaller<StartLevelEvent>()
+                .AddCaller<NextLevelEvent>()
+                .AddCaller<RestartLevelEvent>()
 
                 .BuildAndInit();
             _pausableRunner = _pipeline.GetRunner<EcsPausableRunner>();

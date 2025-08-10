@@ -458,6 +458,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _uiDocument: {fileID: 972524043}
   _plantCardTemplate: {fileID: 9197481963319205126, guid: 32cfd3f02f4ad3040807ed172612ee8a, type: 3}
+  _selectablePlantCardTemplate: {fileID: 9197481963319205126, guid: b8b46d67912f5f844a7f4b1814d78d40, type: 3}
+  _selectedPlantSlotTemplate: {fileID: 9197481963319205126, guid: 975f5cf2e890b1543829a094bc85b62e, type: 3}
 --- !u!114 &972524043
 MonoBehaviour:
   m_ObjectHideFlags: 0

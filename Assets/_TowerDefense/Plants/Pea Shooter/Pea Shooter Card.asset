@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlantConfig: {fileID: 11400000, guid: 7863ff4d4d9786c409787d4368771b32, type: 2}
   Icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  Cost: 100
+  Cost: 25
   Cooldown: 1

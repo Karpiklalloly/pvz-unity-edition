@@ -53,7 +53,12 @@ namespace TowerDefense
         {
             var world = Bootstrap.Instance.World;
             var transformPool = world.GetPool<TransformReference>();
-            if (transformPool.Has(entity)) Destroy(transformPool.Get(entity).Transform.gameObject);
+            if (transformPool.Has(entity))
+            {
+                var go = transformPool.Get(entity).Transform.gameObject;
+                Object.Destroy(go.GetComponent<Provider>());
+                Destroy(go);
+            };
             world.DelEntity(entity);
         }
     }
