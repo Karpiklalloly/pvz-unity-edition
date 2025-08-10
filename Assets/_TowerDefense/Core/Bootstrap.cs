@@ -136,6 +136,7 @@ namespace TowerDefense.Core
                 //
                 // .Add(new CleanupSystem())
                 .Add(new LookAtCameraSystem())
+                .Add(new PauseSystem())
                 
                 .AddCaller<CollisionEvent>()
                 .AddCaller<DamageEvent>()

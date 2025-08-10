@@ -10,7 +10,8 @@ using Object = UnityEngine.Object;
 
 namespace TowerDefense.Core
 {
-    public class GameUIUpdateSystem : IEcsInject<EcsDefaultWorld>, IEcsInject<EcsEventWorld>, IEcsInit, IEcsPausableRun, IEcsRunOnEvent<SceneLoadedEvent>, IEcsRunOnEvent<NewWaveEvent>, IEcsRunOnEvent<WinEvent>, IEcsRunOnEvent<LoseEvent>, IEcsRunOnEvent<StartLevelEvent>, IEcsRunOnEvent<ZombieDiedEvent>, IEcsRunOnEvent<CollectSunEvent>
+    public class GameUIUpdateSystem : IEcsInject<EcsDefaultWorld>,
+        IEcsInit, IEcsPausableRun, IEcsRunOnEvent<SceneLoadedEvent>, IEcsRunOnEvent<NewWaveEvent>, IEcsRunOnEvent<WinEvent>, IEcsRunOnEvent<LoseEvent>, IEcsRunOnEvent<StartLevelEvent>, IEcsRunOnEvent<ZombieDiedEvent>, IEcsRunOnEvent<CollectSunEvent>
     {
         private GameUIController _controller;
         private int _suns = 0;
@@ -73,11 +74,6 @@ namespace TowerDefense.Core
             _world = obj;
         }
 
-        public void Inject(EcsEventWorld obj)
-        {
-            _eventWorld = obj;
-        }
-
         public void Init()
         {
             var handle = Addressables.LoadAssetsAsync<PlantConfig>("Plant", null, Addressables.MergeMode.Union);
@@ -125,7 +121,7 @@ namespace TowerDefense.Core
 
         public void RunOnEvent(ref CollectSunEvent evt)
         {
-            _sunCollected += 25; // Assuming each sun gives 25 points
+            _sunCollected += evt.SunEntity.Get<Sun>().Amount;
         }
     }
 }

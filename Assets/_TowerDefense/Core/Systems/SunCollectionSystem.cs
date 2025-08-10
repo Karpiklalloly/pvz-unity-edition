@@ -14,7 +14,7 @@ namespace TowerDefense.Core
 
         public void RunOnEvent(ref ClickedEvent evt)
         {
-            _sunPool = _world.GetPool<Sun>();
+            
             int id = evt.Target;
             if (!_sunPool.Has(evt.Target)) return;
             
@@ -32,6 +32,7 @@ namespace TowerDefense.Core
         {
             _world = obj;
             _moveSpeedPool = _world.GetPool<MoveSpeed>();
+            _sunPool = _world.GetPool<Sun>();
         }
 
         private void OnCollect(int id)
