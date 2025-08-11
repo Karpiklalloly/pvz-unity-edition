@@ -1,0 +1,590 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using UnityEditor;
+using UnityEditor.AddressableAssets;
+using UnityEditor.AddressableAssets.Settings;
+using UnityEditor.IMGUI.Controls;
+using UnityEngine;
+
+public class AssetNavigationWindow : EditorWindow
+{
+    [MenuItem("Tools/Asset Navigation Window")]
+    public static void ShowWindow()
+    {
+        GetWindow<AssetNavigationWindow>("Asset Navigation");
+    }
+
+    private TreeViewState treeViewState;
+    private AssetTreeView treeView;
+    private SearchField searchField;
+    private string searchFilter = "";
+    private Vector2 scrollPosition;
+    private AssetTreeViewItem selectedItem;
+    private string newLabel = "";
+    private AddressableAssetSettings settings;
+
+    private void OnEnable()
+    {
+        treeViewState = new TreeViewState();
+        searchField = new SearchField();
+        RefreshTreeView();
+        
+        // Подписываемся на события изменения ассетов
+        EditorApplication.projectChanged += RefreshTreeView;
+    }
+
+    private void OnDisable()
+    {
+        EditorApplication.projectChanged -= RefreshTreeView;
+    }
+
+    private void RefreshTreeView()
+    {
+        treeView = new AssetTreeView(treeViewState);
+        treeView.SetSearchFilter(searchFilter);
+        treeView.Reload();
+        Repaint();
+    }
+
+    private void OnGUI()
+    {
+        DrawToolbar();
+        DrawMainArea();
+    }
+
+    private void DrawToolbar()
+    {
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        
+        // Поле поиска
+        string newSearchFilter = searchField.OnToolbarGUI(searchFilter);
+        if (newSearchFilter != searchFilter)
+        {
+            searchFilter = newSearchFilter;
+            RefreshTreeView();
+        }
+        
+        GUILayout.FlexibleSpace();
+        EditorGUILayout.EndHorizontal();
+    }
+
+    private void DrawMainArea()
+    {
+        EditorGUILayout.BeginHorizontal();
+        
+        // Левая панель - дерево ассетов
+        EditorGUILayout.BeginVertical();
+        scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, GUILayout.ExpandWidth(true));
+        
+        if (treeView != null)
+        {
+            treeView.OnGUI(new Rect(0, 0, position.width * 0.7f - 10, position.height - 60));
+        }
+        
+        EditorGUILayout.EndScrollView();
+        EditorGUILayout.EndVertical();
+        
+        // Правая панель - редактирование Addressable Label
+        DrawLabelEditor();
+        
+        EditorGUILayout.EndHorizontal();
+    }
+
+    private void DrawLabelEditor()
+    {
+        EditorGUILayout.BeginVertical(GUILayout.Width(position.width * 0.3f));
+        
+        GUILayout.Label("Addressable Label", EditorStyles.boldLabel);
+        
+        if (selectedItem != null && selectedItem.assetPath != null)
+        {
+            GUILayout.Label($"Selected: {selectedItem.displayName}", EditorStyles.helpBox);
+            
+            // Проверяем, является ли ассет Addressable
+            bool isAddressable = IsAssetAddressable(selectedItem.assetPath);
+            if (isAddressable)
+            {
+                EditorGUILayout.HelpBox("This asset is Addressable", MessageType.Info);
+            }
+            else
+            {
+                EditorGUILayout.HelpBox("This asset is NOT Addressable", MessageType.Warning);
+            }
+            
+            // Получаем текущие лейблы
+            var labels = GetAssetLabels(selectedItem.assetPath);
+            if (labels.Count > 0)
+            {
+                GUILayout.Label("Current Labels:", EditorStyles.miniLabel);
+                foreach (var label in labels)
+                {
+                    EditorGUILayout.BeginHorizontal();
+                    EditorGUILayout.LabelField(label, EditorStyles.miniLabel);
+                    if (GUILayout.Button("Remove", GUILayout.Width(60)))
+                    {
+                        RemoveAssetLabel(selectedItem.assetPath, label);
+                    }
+                    EditorGUILayout.EndHorizontal();
+                }
+            }
+            else if (isAddressable)
+            {
+                GUILayout.Label("No labels assigned", EditorStyles.miniLabel);
+            }
+            
+            GUILayout.Space(10);
+            
+            // Кнопки действий
+            GUILayout.Label("Actions:", EditorStyles.miniLabel);
+            if (!isAddressable)
+            {
+                if (GUILayout.Button("Make Addressable"))
+                {
+                    MakeAssetAddressable(selectedItem.assetPath);
+                }
+            }
+            else
+            {
+                if (GUILayout.Button("Remove from Addressables"))
+                {
+                    RemoveAssetFromAddressables(selectedItem.assetPath);
+                }
+            }
+            
+            if (GUILayout.Button("Show in Project"))
+            {
+                ShowInProject(selectedItem.assetPath);
+            }
+            
+            GUILayout.Space(10);
+            
+            // Добавление нового лейбла (только для Addressable ассетов)
+            if (isAddressable)
+            {
+                GUILayout.Label("Add Label:", EditorStyles.miniLabel);
+                newLabel = EditorGUILayout.TextField("Label Name", newLabel);
+                
+                if (GUILayout.Button("Add Label") && !string.IsNullOrEmpty(newLabel))
+                {
+                    AddAssetLabel(selectedItem.assetPath, newLabel);
+                    newLabel = "";
+                }
+                
+                // Предложенные лейблы
+                GUILayout.Space(10);
+                GUILayout.Label("Suggested Labels:", EditorStyles.miniLabel);
+                DrawSuggestedLabels();
+            }
+        }
+        else
+        {
+            GUILayout.Label("Select an asset to edit labels", EditorStyles.helpBox);
+        }
+        
+        EditorGUILayout.EndVertical();
+    }
+
+    private void DrawSuggestedLabels()
+    {
+        if (settings == null)
+        {
+            settings = AddressableAssetSettingsDefaultObject.Settings;
+            if (settings == null) return;
+        }
+
+        // Получаем все доступные лейблы через публичный API
+        var allLabels = settings.GetLabels().ToList();
+        
+        int buttonsPerRow = 3;
+        int count = 0;
+
+        EditorGUILayout.BeginHorizontal();
+        foreach (var label in allLabels.Take(12)) // Ограничиваем для UI
+        {
+            if (count > 0 && count % buttonsPerRow == 0)
+            {
+                EditorGUILayout.EndHorizontal();
+                EditorGUILayout.BeginHorizontal();
+            }
+
+            if (GUILayout.Button(label, GUILayout.Width(80), GUILayout.Height(25)))
+            {
+                if (selectedItem != null && selectedItem.assetPath != null)
+                {
+                    AddAssetLabel(selectedItem.assetPath, label);
+                }
+            }
+            count++;
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+
+    private bool IsAssetAddressable(string assetPath)
+    {
+        if (settings == null)
+        {
+            settings = AddressableAssetSettingsDefaultObject.Settings;
+            if (settings == null) return false;
+        }
+
+        var guid = AssetDatabase.AssetPathToGUID(assetPath);
+        var entry = settings.FindAssetEntry(guid);
+        return entry != null;
+    }
+
+    private List<string> GetAssetLabels(string assetPath)
+    {
+        if (settings == null)
+        {
+            settings = AddressableAssetSettingsDefaultObject.Settings;
+            if (settings == null) return new List<string>();
+        }
+
+        var guid = AssetDatabase.AssetPathToGUID(assetPath);
+        var entry = settings.FindAssetEntry(guid);
+        if (entry != null && entry.labels != null)
+        {
+            return entry.labels.ToList();
+        }
+        return new List<string>();
+    }
+
+    private void AddAssetLabel(string assetPath, string label)
+    {
+        if (settings == null)
+        {
+            settings = AddressableAssetSettingsDefaultObject.Settings;
+            if (settings == null) return;
+        }
+
+        // Добавляем лейбл в настройки, если его еще нет
+        if (!settings.GetLabels().Contains(label))
+        {
+            settings.AddLabel(label);
+        }
+        
+        var guid = AssetDatabase.AssetPathToGUID(assetPath);
+        var entry = settings.FindAssetEntry(guid);
+        
+        // Если entry не существует, создаем его
+        if (entry == null)
+        {
+            entry = settings.CreateOrMoveEntry(guid, settings.DefaultGroup);
+        }
+        
+        if (entry != null)
+        {
+            entry.SetLabel(label, true);
+            settings.SetDirty(AddressableAssetSettings.ModificationEvent.EntryModified, entry, true);
+            AssetDatabase.SaveAssets();
+        }
+    }
+
+    private void RemoveAssetLabel(string assetPath, string label)
+    {
+        if (settings == null) return;
+
+        var guid = AssetDatabase.AssetPathToGUID(assetPath);
+        var entry = settings.FindAssetEntry(guid);
+        if (entry != null)
+        {
+            entry.SetLabel(label, false);
+            settings.SetDirty(AddressableAssetSettings.ModificationEvent.EntryModified, entry, true);
+            AssetDatabase.SaveAssets();
+        }
+    }
+
+    private void MakeAssetAddressable(string assetPath)
+    {
+        if (settings == null)
+        {
+            settings = AddressableAssetSettingsDefaultObject.Settings;
+            if (settings == null) return;
+        }
+
+        var guid = AssetDatabase.AssetPathToGUID(assetPath);
+        var entry = settings.CreateOrMoveEntry(guid, settings.DefaultGroup);
+        
+        if (entry != null)
+        {
+            settings.SetDirty(AddressableAssetSettings.ModificationEvent.EntryAdded, entry, true);
+            AssetDatabase.SaveAssets();
+        }
+    }
+
+    private void RemoveAssetFromAddressables(string assetPath)
+    {
+        if (settings == null) return;
+
+        var guid = AssetDatabase.AssetPathToGUID(assetPath);
+        var entry = settings.FindAssetEntry(guid);
+        if (entry != null)
+        {
+            settings.RemoveAssetEntry(entry.guid);
+            settings.SetDirty(AddressableAssetSettings.ModificationEvent.EntryRemoved, entry, true);
+            AssetDatabase.SaveAssets();
+        }
+    }
+
+    private void ShowInProject(string assetPath)
+    {
+        var asset = AssetDatabase.LoadMainAssetAtPath(assetPath);
+        if (asset != null)
+        {
+            EditorGUIUtility.PingObject(asset);
+            Selection.activeObject = asset;
+        }
+    }
+
+    // Класс дерева
+    public class AssetTreeView : TreeView
+    {
+        private string searchFilter = "";
+        private Dictionary<string, AssetTreeViewItem> itemCache = new Dictionary<string, AssetTreeViewItem>();
+
+        public AssetTreeView(TreeViewState state) : base(state)
+        {
+            showBorder = true;
+            showAlternatingRowBackgrounds = true;
+            Reload();
+        }
+
+        public void SetSearchFilter(string filter)
+        {
+            searchFilter = filter?.ToLower() ?? "";
+        }
+
+        protected override TreeViewItem BuildRoot()
+        {
+            var root = new TreeViewItem { id = 0, depth = -1, displayName = "Root" };
+            
+            // Получаем все ассеты в папке Assets
+            string[] allAssets = AssetDatabase.GetAllAssetPaths()
+                .Where(path => path.StartsWith("Assets/") && 
+                              !path.EndsWith(".meta") && 
+                              File.Exists(path))
+                .ToArray();
+
+            if (string.IsNullOrEmpty(searchFilter))
+            {
+                // Строим полную иерархию
+                BuildFullHierarchy(root, allAssets);
+            }
+            else
+            {
+                // Строим фильтрованную иерархию
+                BuildFilteredHierarchy(root, allAssets);
+            }
+
+            SetupDepthsFromParentsAndChildren(root);
+            return root;
+        }
+
+        private void BuildFullHierarchy(TreeViewItem root, string[] allAssets)
+        {
+            itemCache.Clear();
+            
+            // Создаем все папки
+            var folderPaths = new HashSet<string>();
+            foreach (var assetPath in allAssets)
+            {
+                var dir = Path.GetDirectoryName(assetPath);
+                while (dir != null && dir != "Assets")
+                {
+                    folderPaths.Add(dir);
+                    dir = Path.GetDirectoryName(dir);
+                }
+            }
+            folderPaths.Add("Assets");
+
+            // Создаем элементы для папок
+            foreach (var folderPath in folderPaths.OrderBy(p => p))
+            {
+                var item = new AssetTreeViewItem
+                {
+                    id = folderPath.GetHashCode(),
+                    depth = folderPath.Split('/').Length - 1,
+                    displayName = Path.GetFileName(folderPath),
+                    assetPath = folderPath,
+                    isFolder = true
+                };
+                
+                itemCache[folderPath] = item;
+                
+                if (folderPath == "Assets")
+                {
+                    root.AddChild(item);
+                }
+                else
+                {
+                    var parentPath = Path.GetDirectoryName(folderPath);
+                    if (itemCache.ContainsKey(parentPath))
+                    {
+                        itemCache[parentPath].AddChild(item);
+                    }
+                }
+            }
+
+            // Добавляем ассеты
+            foreach (var assetPath in allAssets)
+            {
+                var parentPath = Path.GetDirectoryName(assetPath);
+                if (itemCache.ContainsKey(parentPath))
+                {
+                    var item = new AssetTreeViewItem
+                    {
+                        id = assetPath.GetHashCode(),
+                        depth = assetPath.Split('/').Length,
+                        displayName = Path.GetFileName(assetPath),
+                        assetPath = assetPath,
+                        isFolder = false
+                    };
+                    
+                    itemCache[parentPath].AddChild(item);
+                }
+            }
+        }
+
+        private void BuildFilteredHierarchy(TreeViewItem root, string[] allAssets)
+        {
+            itemCache.Clear();
+            
+            // Находим ассеты, соответствующие фильтру
+            var matchingAssets = allAssets
+                .Where(path => Path.GetFileName(path).ToLower().Contains(searchFilter))
+                .ToList();
+
+            // Находим все папки, содержащие подходящие ассеты
+            var requiredFolders = new HashSet<string>();
+            foreach (var assetPath in matchingAssets)
+            {
+                var dir = Path.GetDirectoryName(assetPath);
+                while (dir != null && dir.StartsWith("Assets"))
+                {
+                    requiredFolders.Add(dir);
+                    dir = Path.GetDirectoryName(dir);
+                }
+            }
+
+            // Создаем элементы для папок
+            var allFolders = requiredFolders.OrderBy(p => p).ToList();
+            foreach (var folderPath in allFolders)
+            {
+                var item = new AssetTreeViewItem
+                {
+                    id = folderPath.GetHashCode(),
+                    depth = folderPath.Split('/').Length - 1,
+                    displayName = Path.GetFileName(folderPath),
+                    assetPath = folderPath,
+                    isFolder = true
+                };
+                
+                itemCache[folderPath] = item;
+                
+                if (folderPath == "Assets")
+                {
+                    root.AddChild(item);
+                }
+                else
+                {
+                    var parentPath = Path.GetDirectoryName(folderPath);
+                    if (itemCache.ContainsKey(parentPath))
+                    {
+                        itemCache[parentPath].AddChild(item);
+                    }
+                }
+            }
+
+            // Добавляем только подходящие ассеты
+            foreach (var assetPath in matchingAssets)
+            {
+                var parentPath = Path.GetDirectoryName(assetPath);
+                if (itemCache.ContainsKey(parentPath))
+                {
+                    var item = new AssetTreeViewItem
+                    {
+                        id = assetPath.GetHashCode(),
+                        depth = assetPath.Split('/').Length,
+                        displayName = Path.GetFileName(assetPath),
+                        assetPath = assetPath,
+                        isFolder = false
+                    };
+                    
+                    itemCache[parentPath].AddChild(item);
+                }
+            }
+        }
+
+        protected override void RowGUI(RowGUIArgs args)
+        {
+            var item = args.item as AssetTreeViewItem;
+            if (item == null) return;
+
+            Rect rowRect = args.rowRect;
+            rowRect.x += GetContentIndent(item);
+            rowRect.width -= GetContentIndent(item);
+
+            // Рисуем иконку
+            Rect iconRect = new Rect(rowRect.x, rowRect.y, 18, 18);
+            Texture icon = item.isFolder ? 
+                EditorGUIUtility.FindTexture("Folder Icon") : 
+                AssetDatabase.GetCachedIcon(item.assetPath);
+            
+            if (icon != null)
+            {
+                GUI.DrawTexture(iconRect, icon, ScaleMode.ScaleToFit);
+            }
+
+            // Рисуем имя
+            Rect labelRect = new Rect(rowRect.x + 22, rowRect.y, rowRect.width - 22, rowRect.height);
+            EditorGUI.LabelField(labelRect, item.displayName);
+
+            // Выделяем всю строку при выборе
+            if (args.selected)
+            {
+                EditorGUI.DrawRect(rowRect, new Color(0.24f, 0.49f, 0.91f, 0.3f));
+            }
+        }
+
+        protected override void DoubleClickedItem(int id)
+        {
+            var item = FindItem(id, rootItem) as AssetTreeViewItem;
+            if (item != null && !item.isFolder)
+            {
+                AssetDatabase.OpenAsset(AssetDatabase.LoadMainAssetAtPath(item.assetPath));
+            }
+        }
+
+        protected override void SelectionChanged(IList<int> selectedIds)
+        {
+            base.SelectionChanged(selectedIds);
+            
+            if (selectedIds.Count > 0)
+            {
+                var item = FindItem(selectedIds[0], rootItem) as AssetTreeViewItem;
+                if (item != null)
+                {
+                    var window = EditorWindow.focusedWindow as AssetNavigationWindow;
+                    if (window != null)
+                    {
+                        window.selectedItem = item;
+                    }
+                }
+            }
+        }
+
+        protected override bool CanMultiSelect(TreeViewItem item)
+        {
+            return false;
+        }
+    }
+
+    // Класс элемента дерева
+    public class AssetTreeViewItem : TreeViewItem
+    {
+        public string assetPath;
+        public bool isFolder;
+    }
+}
