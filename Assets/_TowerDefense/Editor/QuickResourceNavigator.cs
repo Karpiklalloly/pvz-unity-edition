@@ -24,6 +24,17 @@ public class AssetNavigationWindow : EditorWindow
     private AssetTreeViewItem selectedItem;
     private string newLabel = "";
     private AddressableAssetSettings settings;
+    
+    // Фильтры по типу ассета
+    private bool filterScripts = true;
+    private bool filterScenes = true;
+    private bool filterPrefabs = true;
+    private bool filterTextures = true;
+    private bool filterMaterials = true;
+    private bool filterAudio = true;
+    private bool filterModels = true;
+    private bool filterScriptableObjects = true;
+    private bool filterOther = true;
 
     private void OnEnable()
     {
@@ -44,6 +55,10 @@ public class AssetNavigationWindow : EditorWindow
     {
         treeView = new AssetTreeView(treeViewState);
         treeView.SetSearchFilter(searchFilter);
+        treeView.SetTypeFilters(
+            filterScripts, filterScenes, filterPrefabs, filterTextures,
+            filterMaterials, filterAudio, filterModels, filterScriptableObjects, filterOther
+        );
         treeView.Reload();
         Repaint();
     }
@@ -51,6 +66,7 @@ public class AssetNavigationWindow : EditorWindow
     private void OnGUI()
     {
         DrawToolbar();
+        DrawFilterBar();
         DrawMainArea();
     }
 
@@ -70,6 +86,57 @@ public class AssetNavigationWindow : EditorWindow
         EditorGUILayout.EndHorizontal();
     }
 
+    private void DrawFilterBar()
+    {
+        EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+        
+        GUILayout.Label("Type Filters:", EditorStyles.miniLabel);
+        
+        bool oldScripts = filterScripts;
+        bool oldScenes = filterScenes;
+        bool oldPrefabs = filterPrefabs;
+        bool oldTextures = filterTextures;
+        bool oldMaterials = filterMaterials;
+        bool oldAudio = filterAudio;
+        bool oldModels = filterModels;
+        bool oldScriptableObjects = filterScriptableObjects;
+        bool oldOther = filterOther;
+        
+        filterScripts = GUILayout.Toggle(filterScripts, "Scripts", EditorStyles.toolbarButton);
+        filterScenes = GUILayout.Toggle(filterScenes, "Scenes", EditorStyles.toolbarButton);
+        filterPrefabs = GUILayout.Toggle(filterPrefabs, "Prefabs", EditorStyles.toolbarButton);
+        filterTextures = GUILayout.Toggle(filterTextures, "Textures", EditorStyles.toolbarButton);
+        filterMaterials = GUILayout.Toggle(filterMaterials, "Materials", EditorStyles.toolbarButton);
+        filterAudio = GUILayout.Toggle(filterAudio, "Audio", EditorStyles.toolbarButton);
+        filterModels = GUILayout.Toggle(filterModels, "Models", EditorStyles.toolbarButton);
+        filterScriptableObjects = GUILayout.Toggle(filterScriptableObjects, "ScriptableObjects", EditorStyles.toolbarButton);
+        filterOther = GUILayout.Toggle(filterOther, "Other", EditorStyles.toolbarButton);
+        
+        // Проверяем, изменились ли фильтры
+        if (oldScripts != filterScripts || oldScenes != filterScenes || oldPrefabs != filterPrefabs ||
+            oldTextures != filterTextures || oldMaterials != filterMaterials || oldAudio != filterAudio ||
+            oldModels != filterModels || oldScriptableObjects != filterScriptableObjects || oldOther != filterOther)
+        {
+            RefreshTreeView();
+        }
+        
+        if (GUILayout.Button("All", EditorStyles.toolbarButton, GUILayout.Width(40)))
+        {
+            filterScripts = filterScenes = filterPrefabs = filterTextures = 
+            filterMaterials = filterAudio = filterModels = filterScriptableObjects = filterOther = true;
+            RefreshTreeView();
+        }
+        
+        if (GUILayout.Button("None", EditorStyles.toolbarButton, GUILayout.Width(40)))
+        {
+            filterScripts = filterScenes = filterPrefabs = filterTextures = 
+            filterMaterials = filterAudio = filterModels = filterScriptableObjects = filterOther = false;
+            RefreshTreeView();
+        }
+        
+        EditorGUILayout.EndHorizontal();
+    }
+
     private void DrawMainArea()
     {
         EditorGUILayout.BeginHorizontal();
@@ -80,7 +147,7 @@ public class AssetNavigationWindow : EditorWindow
         
         if (treeView != null)
         {
-            treeView.OnGUI(new Rect(0, 0, position.width * 0.7f - 10, position.height - 60));
+            treeView.OnGUI(new Rect(0, 0, position.width * 0.7f - 10, position.height - 90));
         }
         
         EditorGUILayout.EndScrollView();
@@ -343,6 +410,25 @@ public class AssetNavigationWindow : EditorWindow
     {
         private string searchFilter = "";
         private Dictionary<string, AssetTreeViewItem> itemCache = new Dictionary<string, AssetTreeViewItem>();
+        private Dictionary<string, bool> folderHasMissingLabelsCache = new Dictionary<string, bool>();
+        
+        // Фильтры по типу
+        private bool filterScripts = true;
+        private bool filterScenes = true;
+        private bool filterPrefabs = true;
+        private bool filterTextures = true;
+        private bool filterMaterials = true;
+        private bool filterAudio = true;
+        private bool filterModels = true;
+        private bool filterScriptableObjects = true;
+        private bool filterOther = true;
+
+        // Маппинг типов SO к лейблам
+        private Dictionary<string, string> soTypeToLabelMap = new Dictionary<string, string>
+        {
+            { "TowerDefense.PlantConfig", "Plant" },
+            { "TowerDefense.LevelConfig", "Level" }
+        };
 
         public AssetTreeView(TreeViewState state) : base(state)
         {
@@ -355,16 +441,33 @@ public class AssetNavigationWindow : EditorWindow
         {
             searchFilter = filter?.ToLower() ?? "";
         }
+        
+        public void SetTypeFilters(
+            bool scripts, bool scenes, bool prefabs, bool textures,
+            bool materials, bool audio, bool models, bool scriptableObjects, bool other)
+        {
+            filterScripts = scripts;
+            filterScenes = scenes;
+            filterPrefabs = prefabs;
+            filterTextures = textures;
+            filterMaterials = materials;
+            filterAudio = audio;
+            filterModels = models;
+            filterScriptableObjects = scriptableObjects;
+            filterOther = other;
+        }
 
         protected override TreeViewItem BuildRoot()
         {
             var root = new TreeViewItem { id = 0, depth = -1, displayName = "Root" };
+            folderHasMissingLabelsCache.Clear();
             
             // Получаем все ассеты в папке Assets
             string[] allAssets = AssetDatabase.GetAllAssetPaths()
                 .Where(path => path.StartsWith("Assets/") && 
                               !path.EndsWith(".meta") && 
                               File.Exists(path))
+                .Where(path => IsAssetTypeAllowed(path)) // Применяем фильтр по типу
                 .ToArray();
 
             if (string.IsNullOrEmpty(searchFilter))
@@ -380,6 +483,54 @@ public class AssetNavigationWindow : EditorWindow
 
             SetupDepthsFromParentsAndChildren(root);
             return root;
+        }
+
+        private bool IsAssetTypeAllowed(string assetPath)
+        {
+            string extension = Path.GetExtension(assetPath).ToLower();
+            string fileName = Path.GetFileName(assetPath);
+
+            // Определяем тип ассета
+            if (extension == ".cs" || extension == ".js" || extension == ".boo")
+            {
+                return filterScripts;
+            }
+            else if (extension == ".unity")
+            {
+                return filterScenes;
+            }
+            else if (extension == ".prefab")
+            {
+                return filterPrefabs;
+            }
+            else if (extension == ".png" || extension == ".jpg" || extension == ".jpeg" || 
+                     extension == ".tga" || extension == ".psd" || extension == ".gif" ||
+                     extension == ".bmp" || extension == ".tif" || extension == ".tiff")
+            {
+                return filterTextures;
+            }
+            else if (extension == ".mat")
+            {
+                return filterMaterials;
+            }
+            else if (extension == ".wav" || extension == ".mp3" || extension == ".ogg" ||
+                     extension == ".aif" || extension == ".aiff")
+            {
+                return filterAudio;
+            }
+            else if (extension == ".fbx" || extension == ".obj" || extension == ".dae" ||
+                     extension == ".3ds" || extension == ".dxf")
+            {
+                return filterModels;
+            }
+            else if (AssetDatabase.GetMainAssetTypeAtPath(assetPath) == typeof(ScriptableObject))
+            {
+                return filterScriptableObjects;
+            }
+            else
+            {
+                return filterOther;
+            }
         }
 
         private void BuildFullHierarchy(TreeViewItem root, string[] allAssets)
@@ -427,7 +578,7 @@ public class AssetNavigationWindow : EditorWindow
                 }
             }
 
-            // Добавляем ассеты
+            // Добавляем ассеты и обновляем информацию о папках
             foreach (var assetPath in allAssets)
             {
                 var parentPath = Path.GetDirectoryName(assetPath);
@@ -439,10 +590,22 @@ public class AssetNavigationWindow : EditorWindow
                         depth = assetPath.Split('/').Length,
                         displayName = Path.GetFileName(assetPath),
                         assetPath = assetPath,
-                        isFolder = false
+                        isFolder = false,
+                        assetType = GetAssetType(assetPath),
+                        requiredLabel = GetRequiredLabelForSO(assetPath)
                     };
                     
                     itemCache[parentPath].AddChild(item);
+                    
+                    // Обновляем информацию о папке
+                    if (item.requiredLabel != null)
+                    {
+                        var labels = GetAssetLabels(assetPath);
+                        if (!labels.Contains(item.requiredLabel))
+                        {
+                            UpdateFolderMissingLabels(parentPath);
+                        }
+                    }
                 }
             }
         }
@@ -450,6 +613,7 @@ public class AssetNavigationWindow : EditorWindow
         private void BuildFilteredHierarchy(TreeViewItem root, string[] allAssets)
         {
             itemCache.Clear();
+            folderHasMissingLabelsCache.Clear();
             
             // Находим ассеты, соответствующие фильтру
             var matchingAssets = allAssets
@@ -497,7 +661,7 @@ public class AssetNavigationWindow : EditorWindow
                 }
             }
 
-            // Добавляем только подходящие ассеты
+            // Добавляем только подходящие ассеты и обновляем информацию о папках
             foreach (var assetPath in matchingAssets)
             {
                 var parentPath = Path.GetDirectoryName(assetPath);
@@ -509,12 +673,54 @@ public class AssetNavigationWindow : EditorWindow
                         depth = assetPath.Split('/').Length,
                         displayName = Path.GetFileName(assetPath),
                         assetPath = assetPath,
-                        isFolder = false
+                        isFolder = false,
+                        assetType = GetAssetType(assetPath),
+                        requiredLabel = GetRequiredLabelForSO(assetPath)
                     };
                     
                     itemCache[parentPath].AddChild(item);
+                    
+                    // Обновляем информацию о папке
+                    if (item.requiredLabel != null)
+                    {
+                        var labels = GetAssetLabels(assetPath);
+                        if (!labels.Contains(item.requiredLabel))
+                        {
+                            UpdateFolderMissingLabels(parentPath);
+                        }
+                    }
                 }
             }
+        }
+
+        private void UpdateFolderMissingLabels(string folderPath)
+        {
+            folderHasMissingLabelsCache[folderPath] = true;
+            var parentPath = Path.GetDirectoryName(folderPath);
+            while (parentPath != null && parentPath.StartsWith("Assets"))
+            {
+                folderHasMissingLabelsCache[parentPath] = true;
+                parentPath = Path.GetDirectoryName(parentPath);
+            }
+        }
+
+        private Type GetAssetType(string assetPath)
+        {
+            return AssetDatabase.GetMainAssetTypeAtPath(assetPath);
+        }
+
+        private string GetRequiredLabelForSO(string assetPath)
+        {
+            var assetType = AssetDatabase.GetMainAssetTypeAtPath(assetPath);
+            if (assetType != null && assetType.IsSubclassOf(typeof(ScriptableObject)))
+            {
+                string fullTypeName = assetType.FullName;
+                if (soTypeToLabelMap.ContainsKey(fullTypeName))
+                {
+                    return soTypeToLabelMap[fullTypeName];
+                }
+            }
+            return null;
         }
 
         protected override void RowGUI(RowGUIArgs args)
@@ -537,8 +743,40 @@ public class AssetNavigationWindow : EditorWindow
                 GUI.DrawTexture(iconRect, icon, ScaleMode.ScaleToFit);
             }
 
+            // Рисуем дополнительную иконку для SO с отсутствующим лейблом
+            float warningIconOffset = 0;
+            if (!item.isFolder && item.requiredLabel != null)
+            {
+                var labels = GetAssetLabels(item.assetPath);
+                if (!labels.Contains(item.requiredLabel))
+                {
+                    // Рисуем предупреждающую иконку
+                    Rect warningIconRect = new Rect(iconRect.x + iconRect.width + 2, rowRect.y, 16, 16);
+                    Texture warningIcon = EditorGUIUtility.FindTexture("console.warnicon");
+                    if (warningIcon != null)
+                    {
+                        GUI.DrawTexture(warningIconRect, warningIcon, ScaleMode.ScaleToFit);
+                        warningIconOffset = 18; // 16px иконка + 2px отступ
+                    }
+                }
+            }
+            // Рисуем иконку для папок с отсутствующими лейблами
+            else if (item.isFolder && folderHasMissingLabelsCache.ContainsKey(item.assetPath) && 
+                     folderHasMissingLabelsCache[item.assetPath])
+            {
+                Rect warningIconRect = new Rect(iconRect.x + iconRect.width + 2, rowRect.y, 16, 16);
+                Texture warningIcon = EditorGUIUtility.FindTexture("console.warnicon");
+                if (warningIcon != null)
+                {
+                    GUI.DrawTexture(warningIconRect, warningIcon, ScaleMode.ScaleToFit);
+                    warningIconOffset = 18; // 16px иконка + 2px отступ
+                }
+            }
+
             // Рисуем имя
-            Rect labelRect = new Rect(rowRect.x + 22, rowRect.y, rowRect.width - 22, rowRect.height);
+            float offset = 22 + warningIconOffset;
+            
+            Rect labelRect = new Rect(rowRect.x + offset, rowRect.y, rowRect.width - offset, rowRect.height);
             EditorGUI.LabelField(labelRect, item.displayName);
 
             // Выделяем всю строку при выборе
@@ -546,6 +784,20 @@ public class AssetNavigationWindow : EditorWindow
             {
                 EditorGUI.DrawRect(rowRect, new Color(0.24f, 0.49f, 0.91f, 0.3f));
             }
+        }
+
+        private List<string> GetAssetLabels(string assetPath)
+        {
+            var settings = AddressableAssetSettingsDefaultObject.Settings;
+            if (settings == null) return new List<string>();
+
+            var guid = AssetDatabase.AssetPathToGUID(assetPath);
+            var entry = settings.FindAssetEntry(guid);
+            if (entry != null && entry.labels != null)
+            {
+                return entry.labels.ToList();
+            }
+            return new List<string>();
         }
 
         protected override void DoubleClickedItem(int id)
@@ -586,5 +838,7 @@ public class AssetNavigationWindow : EditorWindow
     {
         public string assetPath;
         public bool isFolder;
+        public Type assetType;
+        public string requiredLabel;
     }
 }

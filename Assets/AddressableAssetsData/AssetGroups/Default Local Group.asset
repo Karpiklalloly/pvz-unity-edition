@@ -15,16 +15,23 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: e3080f6e168282d47abb46038fa48ffc
   m_SerializeEntries:
-  - m_GUID: 3d0695683676cd64cb68574e6f79fa39
-    m_Address: Plants
+  - m_GUID: 1ff0ac877bb6413419f080fdde71fbb8
+    m_Address: Assets/_TowerDefense/Levels/1/Level 1.asset
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - Level
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4ee91ddd7c41e6947bfbc97905b3dc02
     m_Address: WallNut
     m_ReadOnly: 0
     m_SerializedLabels:
     - Plant
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 64c8585c9e44da047b43e96d174d144e
+    m_Address: Assets/_TowerDefense/Levels/2/Level 2.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Level
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7863ff4d4d9786c409787d4368771b32
     m_Address: Pea Shooter
