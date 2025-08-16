@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using DCFApixels.DragonECS;
 using Karpik.Engine.Shared.DragonECS;
 using Karpik.Engine.Shared.EcsRunners;
 using TowerDefense.Core.PlantAttackSystems;
 using TriInspector;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using static TowerDefense.PlayerPrefsConstants;
 
 namespace TowerDefense.Core
@@ -161,7 +163,7 @@ namespace TowerDefense.Core
             _pausableRunner = _pipeline.GetRunner<EcsPausableRunner>();
             _pausableLateRunner = _pipeline.GetRunner<PausableLateRunner>();
         }
-
+        
         private void InitializePlayerPrefs()
         {
             if (!UserData.HasKey(unlocked_plants))
@@ -171,6 +173,7 @@ namespace TowerDefense.Core
             var unlocked = UserData.GetStrings(unlocked_plants);
             if (unlocked[0] == string.Empty)
             {
+                UserData.SetStrings(unlocked_plants, "Pea Shooter");
                 Debug.LogError("No unlocked plants found.");
                 // UserData.SetStrings(unlocked_plants, _allPlants[0].Name);
                 UserData.Save();

@@ -411,6 +411,7 @@ public class AssetNavigationWindow : EditorWindow
         private string searchFilter = "";
         private Dictionary<string, AssetTreeViewItem> itemCache = new Dictionary<string, AssetTreeViewItem>();
         private Dictionary<string, bool> folderHasMissingLabelsCache = new Dictionary<string, bool>();
+        private AssetTreeViewItem contextMenuItem;
         
         // Фильтры по типу
         private bool filterScripts = true;
@@ -427,7 +428,8 @@ public class AssetNavigationWindow : EditorWindow
         private Dictionary<string, string> soTypeToLabelMap = new Dictionary<string, string>
         {
             { "TowerDefense.PlantConfig", "Plant" },
-            { "TowerDefense.LevelConfig", "Level" }
+            { "TowerDefense.LevelConfig", "Level" },
+            { "TowerDefense.ZombieConfig", "Zombie" }
         };
 
         public AssetTreeView(TreeViewState state) : base(state)
@@ -823,6 +825,128 @@ public class AssetNavigationWindow : EditorWindow
                     {
                         window.selectedItem = item;
                     }
+                }
+            }
+        }
+
+        protected override void ContextClickedItem(int id)
+        {
+            var item = FindItem(id, rootItem) as AssetTreeViewItem;
+            if (item != null)
+            {
+                contextMenuItem = item;
+                
+                // Создаем контекстное меню как в Project окне
+                var menu = new GenericMenu();
+                
+                // Пункты для всех элементов
+                menu.AddItem(new GUIContent("Show in Explorer"), false, () => {
+                    EditorUtility.RevealInFinder(item.assetPath);
+                });
+                
+                menu.AddSeparator("");
+                
+                menu.AddItem(new GUIContent("Rename"), false, () => {
+                    BeginRename(item);
+                });
+                
+                menu.AddItem(new GUIContent("Delete"), false, () => {
+                    string message = item.isFolder ? 
+                        $"Are you sure you want to delete '{item.displayName}' and its contents?\n\nYou cannot undo this action." :
+                        $"Are you sure you want to delete '{item.displayName}'?\n\nYou cannot undo this action.";
+                    
+                    string title = item.isFolder ? "Delete Selected Folder" : "Delete Selected Asset";
+                    
+                    if (EditorUtility.DisplayDialog(title, message, "Delete", "Cancel"))
+                    {
+                        AssetDatabase.DeleteAsset(item.assetPath);
+                        var window = EditorWindow.focusedWindow as AssetNavigationWindow;
+                        if (window != null)
+                        {
+                            window.RefreshTreeView();
+                        }
+                    }
+                });
+                
+                menu.AddSeparator("");
+                
+                menu.AddItem(new GUIContent("Copy Path"), false, () => {
+                    EditorGUIUtility.systemCopyBuffer = item.assetPath;
+                });
+                
+                if (!item.isFolder)
+                {
+                    menu.AddItem(new GUIContent("Copy GUID"), false, () => {
+                        var guid = AssetDatabase.AssetPathToGUID(item.assetPath);
+                        EditorGUIUtility.systemCopyBuffer = guid;
+                    });
+                }
+                
+                menu.AddSeparator("");
+                
+                // Пункты специфичные для файлов
+                if (!item.isFolder)
+                {
+                    menu.AddItem(new GUIContent("Open"), false, () => {
+                        AssetDatabase.OpenAsset(AssetDatabase.LoadMainAssetAtPath(item.assetPath));
+                    });
+                    
+                    menu.AddItem(new GUIContent("Open in New Window"), false, () => {
+                        AssetDatabase.OpenAsset(AssetDatabase.LoadMainAssetAtPath(item.assetPath));
+                    });
+                }
+                
+                menu.ShowAsContext();
+            }
+        }
+
+        protected override void ContextClicked()
+        {
+            // Контекстное меню для пустого пространства
+            GenericMenu menu = new GenericMenu();
+            menu.AddItem(new GUIContent("Refresh"), false, () => {
+                var window = EditorWindow.focusedWindow as AssetNavigationWindow;
+                if (window != null)
+                {
+                    window.RefreshTreeView();
+                }
+            });
+            menu.ShowAsContext();
+        }
+
+        protected override bool CanRename(TreeViewItem item)
+        {
+            return true;
+        }
+
+        protected override void RenameEnded(RenameEndedArgs args)
+        {
+            var item = FindItem(args.itemID, rootItem) as AssetTreeViewItem;
+            if (item != null && args.acceptedRename)
+            {
+                string oldPath = item.assetPath;
+                string newPath = Path.GetDirectoryName(oldPath) + "/" + args.newName;
+                
+                // Добавляем расширение если его нет и это файл
+                if (!item.isFolder && !Path.HasExtension(newPath) && Path.HasExtension(oldPath))
+                {
+                    newPath += Path.GetExtension(oldPath);
+                }
+                
+                string error = AssetDatabase.MoveAsset(oldPath, newPath);
+                if (string.IsNullOrEmpty(error))
+                {
+                    item.assetPath = newPath;
+                    item.displayName = Path.GetFileName(newPath);
+                    var window = EditorWindow.focusedWindow as AssetNavigationWindow;
+                    if (window != null)
+                    {
+                        window.RefreshTreeView();
+                    }
+                }
+                else
+                {
+                    Debug.LogError("Failed to rename asset: " + error);
                 }
             }
         }

@@ -27,7 +27,7 @@ namespace TowerDefense.Core
             if (_timer >= config.Waves[playerData.CurrentWaveIndex].DelayBeforeStart
                 || (flow.Waves.TryGetValue(playerData.CurrentWaveIndex - 1, out var zz) && zz.Count == 0))
             {
-                
+
                 if (flow.Waves == null) flow.Waves = new Dictionary<int, List<int>>();
                 flow.Waves.TryAdd(playerData.CurrentWaveIndex, new List<int>());
                 var z = flow.Waves[playerData.CurrentWaveIndex];
@@ -37,7 +37,7 @@ namespace TowerDefense.Core
                     var entity = SpawnZombie(zombie);
                     z.Add(entity);
                 }
-                
+
                 _eventWorld.SendEvent(new NewWaveEvent()
                 {
                     WaveIndex = playerData.CurrentWaveIndex,
@@ -47,8 +47,6 @@ namespace TowerDefense.Core
                 playerData.CurrentWaveIndex++;
                 _timer = 0;
             }
-            // TODO: Спавнить, если все прошлые зомби умерли (ПРОВЕРИТЬ В ДЕЙСТВИИ)
-
         }
 
         public void Inject(EcsDefaultWorld obj)

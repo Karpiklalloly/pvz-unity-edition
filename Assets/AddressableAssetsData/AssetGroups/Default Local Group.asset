@@ -39,6 +39,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Plant
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b038db2fc996f0446aebf6b0d80ed332
+    m_Address: Assets/_TowerDefense/Zombies/Zombie.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Zombie
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: fc2dba25f4a81ec4ba9d305a7b5f4e63
     m_Address: Sunflower
     m_ReadOnly: 0

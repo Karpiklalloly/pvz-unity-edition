@@ -1,34 +1,28 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/_TowerDefense/UI/GmaUI.uss?fileID=7433441132597879392&amp;guid=75935a621f29de34fbe9811de1a1f626&amp;type=3#GmaUI" />
-    
-    <!-- Plant Selection Menu (PvZ style) -->
+    <Style src="project://database/Assets/UIExtension/Karpik/UIExtension/Resources/Styles/Containers.uss?fileID=7433441132597879392&amp;guid=eb71ad6a46146c04a8873e2108f94eab&amp;type=3#Containers" />
     <ui:VisualElement name="plant-selection-menu" class="plant-selection-menu" style="display: none;">
         <ui:VisualElement name="plant-selection-background" class="plant-selection-background">
             <ui:VisualElement name="plant-selection-header" class="plant-selection-header">
                 <ui:Label text="Выберите растения" name="selection-title" class="selection-title" />
                 <ui:Label text="Выберите растения для защиты от зомби" name="selection-subtitle" class="selection-subtitle" />
             </ui:VisualElement>
-            
             <ui:VisualElement name="plant-selection-content" class="plant-selection-content">
                 <ui:VisualElement name="available-plants" class="available-plants">
                     <ui:Label text="Доступные растения:" class="section-label" />
                     <ui:ScrollView name="available-plants-scroll" class="available-plants-scroll" />
                 </ui:VisualElement>
-                
                 <ui:VisualElement name="selected-plants" class="selected-plants">
                     <ui:Label text="Выбранные растения:" class="section-label" />
                     <ui:VisualElement name="selected-plants-container" class="selected-plants-container" />
                     <ui:Label text="0/6" name="selection-counter" class="selection-counter" />
                 </ui:VisualElement>
             </ui:VisualElement>
-            
             <ui:VisualElement name="plant-selection-buttons" class="plant-selection-buttons">
                 <ui:Button name="start-level-button" text="Начать уровень" class="start-level-button" />
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
-    
-    <!-- Game HUD -->
     <ui:VisualElement name="hud-container" style="flex-grow: 1; pick-mode: Ignore;">
         <ui:VisualElement name="top-panel" class="top-panel">
             <ui:VisualElement name="sun-counter" class="sun-counter">
@@ -49,8 +43,6 @@
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
-    
-    <!-- Victory Window -->
     <ui:VisualElement name="victory-window" class="game-end-window" style="display: none;">
         <ui:VisualElement name="victory-content" class="game-end-content victory-content">
             <ui:Label text="ПОБЕДА!" name="victory-title" class="game-end-title victory-title" />
@@ -67,8 +59,6 @@
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
-    
-    <!-- Defeat Window -->
     <ui:VisualElement name="defeat-window" class="game-end-window" style="display: none;">
         <ui:VisualElement name="defeat-content" class="game-end-content defeat-content">
             <ui:Label text="ПОРАЖЕНИЕ" name="defeat-title" class="game-end-title defeat-title" />
